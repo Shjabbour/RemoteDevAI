@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: remotedevai-relay
+    runtime: node
+    region: oregon  # Change to your preferred region (oregon, frankfurt, singapore, etc.)
+    plan: free
+    branch: master
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000  # Render uses port 10000 by default
+    autoDeploy: true
+    scaling:
+      minInstances: 1
+      maxInstances: 1  # Free tier limitation
