@@ -30,7 +30,7 @@ export function formatDate(
     return formatRelativeTime(dateObj);
   }
 
-  const options: Intl.DateTimeFormatOptions = {
+  const formatOptions: Record<string, Intl.DateTimeFormatOptions> = {
     short: { year: 'numeric', month: 'numeric', day: 'numeric' },
     long: { year: 'numeric', month: 'long', day: 'numeric' },
     time: { hour: '2-digit', minute: '2-digit' },
@@ -41,9 +41,9 @@ export function formatDate(
       hour: '2-digit',
       minute: '2-digit'
     }
-  }[format];
+  };
 
-  return dateObj.toLocaleDateString(locale, options);
+  return dateObj.toLocaleDateString(locale, formatOptions[format]);
 }
 
 /**

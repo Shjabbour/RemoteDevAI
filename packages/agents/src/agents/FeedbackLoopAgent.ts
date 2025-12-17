@@ -372,7 +372,7 @@ export class FeedbackLoopAgent extends BaseAgent {
 
     // Convert learned patterns to user preferences
     const preferences: Partial<UserPreferences> = {
-      codeStyle: {},
+      codeStyle: { indentSize: 2, useTabs: false, lineWidth: 80, semicolons: true },
     };
 
     for (const pattern of patterns) {

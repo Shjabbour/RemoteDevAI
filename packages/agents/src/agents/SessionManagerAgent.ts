@@ -86,7 +86,7 @@ export class SessionManagerAgent extends BaseAgent {
   protected async process(
     message: AgentMessage,
     context: AgentContext
-  ): Promise<AgentResponse<SessionState | SessionState[]>> {
+  ): Promise<AgentResponse<SessionState | SessionState[] | null>> {
     if (message.type !== MessageType.SESSION_UPDATE) {
       return this.createErrorResponse(
         'INVALID_MESSAGE_TYPE',

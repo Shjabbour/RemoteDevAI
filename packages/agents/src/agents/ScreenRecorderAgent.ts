@@ -26,7 +26,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface RecordingSession {
   id: string;
-  type: 'browser' | 'terminal' | 'desktop';
+  type: 'browser' | 'terminal' | 'desktop' | 'screen';
   startTime: string;
   browser?: Browser;
   context?: BrowserContext;

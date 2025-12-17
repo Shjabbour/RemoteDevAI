@@ -21,6 +21,7 @@ export enum MessageType {
   SESSION_UPDATE = 'session_update',
   FEEDBACK = 'feedback',
   ERROR = 'error',
+  COMMAND = 'command',
 }
 
 /**
@@ -62,6 +63,7 @@ export enum SessionStatus {
   PAUSED = 'paused',
   COMPLETED = 'completed',
   ERROR = 'error',
+  COMMAND = 'command',
 }
 
 /**
@@ -160,7 +162,7 @@ export interface SessionState {
 export interface SessionRecording {
   id: string;
   sessionId: string;
-  type: 'screen' | 'terminal' | 'browser';
+  type: 'screen' | 'terminal' | 'browser' | 'desktop';
   startTime: string;
   endTime?: string;
   duration?: number;
