@@ -54,8 +54,8 @@ export class ClaudeRelay {
       cwd: cwd,
       env: {
         ...process.env,
-        FORCE_COLOR: '1', // Enable colored output
-        TERM: 'xterm-256color'
+        FORCE_COLOR: '0', // Enable colored output
+        TERM: 'dumb'
       }
     });
 
@@ -147,13 +147,13 @@ export class ClaudeRelay {
     const cwd = process.env.CLAUDE_CWD || process.cwd();
 
     // Spawn Claude CLI with the command directly
-    const claudeProcess = spawn(this.getClaudePath(), [command], {
+    const claudeProcess = spawn(this.getClaudePath(), ['-p', command, '--no-input'], {
       shell: true,
       cwd: cwd,
       env: {
         ...process.env,
-        FORCE_COLOR: '1',
-        TERM: 'xterm-256color'
+        FORCE_COLOR: '0',
+        TERM: 'dumb'
       }
     });
 
