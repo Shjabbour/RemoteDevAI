@@ -1,4 +1,5 @@
 import os from 'os';
+import { EncryptionContext } from './encryption.js';
 
 /**
  * RelayConnector - Connects to the cloud relay server for internet access
@@ -17,6 +18,9 @@ export class RelayConnector {
     this.agentId = null;
     this.pairingCode = null;
     this.viewerCount = 0;
+
+    // E2E encryption per viewer
+    this.viewerEncryption = new Map(); // viewerId -> EncryptionContext
   }
 
   /**
@@ -111,9 +115,43 @@ export class RelayConnector {
       this.viewerCount = data.viewerCount;
       console.log(`[RelayConnector] Viewer left (total: ${this.viewerCount})`);
 
+      // Clean up viewer encryption context
+      if (data.viewerId) {
+        this.viewerEncryption.delete(data.viewerId);
+      }
+
       // Stop streaming if no viewers
       if (this.viewerCount === 0 && this.screenCapture?.isStreaming) {
         this.screenCapture.stopStreaming();
+      }
+    });
+
+    // -------- E2E Encryption Key Exchange --------
+
+    this.socket.on('encryption:init', (data) => {
+      const { viewerId, publicKey } = data;
+      console.log(`[RelayConnector] Encryption init from viewer ${viewerId}`);
+
+      try {
+        // Create encryption context for this viewer
+        const encryption = new EncryptionContext();
+        const ourPublicKey = encryption.initialize();
+
+        // Complete key exchange with viewer's public key
+        encryption.setRemotePublicKey(publicKey);
+
+        // Store for this viewer
+        this.viewerEncryption.set(viewerId, encryption);
+
+        // Send our public key back to viewer
+        this.socket.emit('encryption:ready', {
+          viewerId,
+          publicKey: ourPublicKey
+        });
+
+        console.log(`[RelayConnector] E2E encryption established with viewer ${viewerId}`);
+      } catch (error) {
+        console.error('[RelayConnector] Encryption init failed:', error);
       }
     });
 
@@ -135,8 +173,30 @@ export class RelayConnector {
       this.screenCapture.setQuality(quality);
       this.screenCapture.selectDisplay(displayId);
 
-      // Subscribe to frames and forward to relay
+      // Subscribe to frames and forward to relay (with optional encryption)
       this.screenCapture.subscribe((frameData) => {
+        // If any viewer has encryption enabled, encrypt the frame
+        // For simplicity, we'll encrypt for all viewers if any have encryption
+        if (this.viewerEncryption.size > 0) {
+          // Use first viewer's encryption context (all should have same key exchange)
+          const encryption = this.viewerEncryption.values().next().value;
+          if (encryption && encryption.isReady) {
+            try {
+              const encrypted = encryption.encryptFrame(frameData.frame);
+              this.socket.emit('screen:frame', {
+                ...frameData,
+                frame: null, // Clear plaintext
+                encrypted: true,
+                data: encrypted.data,
+                iv: encrypted.iv
+              });
+              return;
+            } catch (error) {
+              console.error('[RelayConnector] Frame encryption failed:', error);
+            }
+          }
+        }
+        // Fallback: send unencrypted frame
         this.socket.emit('screen:frame', frameData);
       });
 

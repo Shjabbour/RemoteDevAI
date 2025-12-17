@@ -44,6 +44,10 @@ class RemoteDevAI {
             lastCheck: Date.now()
         };
 
+        // End-to-end encryption
+        this.encryption = null;
+        this.encryptionEnabled = false;
+
         this.elements = {};
         this.init();
     }
@@ -54,7 +58,21 @@ class RemoteDevAI {
         this.setupEventListeners();
         this.setupSpeechRecognition();
         this.setupCanvas();
+        this.initEncryption();
         this.autoConnect();
+    }
+
+    async initEncryption() {
+        try {
+            if (typeof EncryptionContext !== 'undefined') {
+                this.encryption = new EncryptionContext();
+                console.log('[RemoteDevAI] Encryption module loaded');
+            } else {
+                console.warn('[RemoteDevAI] Encryption module not available');
+            }
+        } catch (error) {
+            console.error('[RemoteDevAI] Failed to initialize encryption:', error);
+        }
     }
 
     cacheElements() {
@@ -538,7 +556,7 @@ class RemoteDevAI {
             this.startHeartbeat();
         });
 
-        this.socket.on('viewer:connected', (data) => {
+        this.socket.on('viewer:connected', async (data) => {
             this.connectionState = 'connected';
             this.agentHostname = data.agent?.hostname || data.hostname || 'Unknown';
             this.agentInfo = data.agent || null;
@@ -552,6 +570,31 @@ class RemoteDevAI {
 
             // Store successful pairing for potential reconnection
             localStorage.setItem('lastPairingCode', this.pairingCode);
+
+            // Initiate E2E encryption key exchange if available
+            if (this.encryption && data.supportsEncryption) {
+                try {
+                    const publicKey = await this.encryption.initialize();
+                    this.socket.emit('encryption:init', { publicKey });
+                    console.log('[RemoteDevAI] Encryption key exchange initiated');
+                } catch (error) {
+                    console.error('[RemoteDevAI] Failed to initiate encryption:', error);
+                }
+            }
+        });
+
+        // Handle encryption key exchange response
+        this.socket.on('encryption:ready', async (data) => {
+            if (this.encryption && data.publicKey) {
+                try {
+                    await this.encryption.setRemotePublicKey(data.publicKey);
+                    this.encryptionEnabled = true;
+                    this.addSystemMessage('End-to-end encryption enabled');
+                    console.log('[RemoteDevAI] E2E encryption established');
+                } catch (error) {
+                    console.error('[RemoteDevAI] Key exchange failed:', error);
+                }
+            }
         });
 
         this.socket.on('viewer:error', (data) => {
@@ -618,9 +661,28 @@ class RemoteDevAI {
                 </svg>`;
         });
 
-        this.socket.on('screen:frame', (data) => {
-            if (data.frame) {
-                this.frameImage.src = 'data:image/jpeg;base64,' + data.frame;
+        this.socket.on('screen:frame', async (data) => {
+            try {
+                let frameData;
+
+                // Check if frame is encrypted
+                if (data.encrypted && this.encryption && this.encryptionEnabled) {
+                    // Decrypt the frame
+                    frameData = await this.encryption.decryptFrame(data);
+                } else if (data.frame) {
+                    // Unencrypted frame (backwards compatibility)
+                    frameData = data.frame;
+                } else {
+                    return;
+                }
+
+                this.frameImage.src = 'data:image/jpeg;base64,' + frameData;
+            } catch (error) {
+                console.error('[RemoteDevAI] Frame decryption error:', error);
+                // Fall back to showing encrypted data indicator
+                if (data.frame) {
+                    this.frameImage.src = 'data:image/jpeg;base64,' + data.frame;
+                }
             }
         });
 

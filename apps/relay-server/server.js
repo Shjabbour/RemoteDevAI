@@ -939,7 +939,8 @@ io.on('connection', (socket) => {
         hostname: agent.info.hostname,
         platform: agent.info.platform
       },
-      message: 'Connected to desktop agent'
+      message: 'Connected to desktop agent',
+      supportsEncryption: true // Signal that E2E encryption is available
     });
 
     // Notify agent of new viewer
@@ -953,6 +954,38 @@ io.on('connection', (socket) => {
       recordUsageEvent(agent.usageSessionId, 'viewer_joined', {
         viewerId,
         viewerCount: agent.viewers.size
+      });
+    }
+  });
+
+  // -------- E2E Encryption Key Exchange (Viewer <-> Agent) --------
+
+  // Viewer initiates encryption key exchange
+  socket.on('encryption:init', (data) => {
+    if (socket.role !== 'viewer' || !socket.agentId) return;
+
+    const agent = agents.get(socket.agentId);
+    if (!agent) return;
+
+    // Forward public key to agent
+    agent.socket.emit('encryption:init', {
+      viewerId: socket.id,
+      publicKey: data.publicKey
+    });
+  });
+
+  // Agent responds with its public key
+  socket.on('encryption:ready', (data) => {
+    if (socket.role !== 'agent' || !socket.agentId) return;
+
+    const agent = agents.get(socket.agentId);
+    if (!agent) return;
+
+    // Forward agent's public key to specific viewer
+    const viewer = viewers.get(data.viewerId);
+    if (viewer && viewer.socket.connected) {
+      viewer.socket.emit('encryption:ready', {
+        publicKey: data.publicKey
       });
     }
   });
