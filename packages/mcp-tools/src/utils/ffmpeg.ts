@@ -272,7 +272,7 @@ export async function mergeVideos(
     command
       .on('end', () => resolve(outputPath))
       .on('error', (err) => reject(err))
-      .mergeToFile(outputPath);
+      .mergeToFile(outputPath, process.cwd());
   });
 }
 

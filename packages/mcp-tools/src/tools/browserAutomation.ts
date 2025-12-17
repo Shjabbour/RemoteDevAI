@@ -46,7 +46,8 @@ export async function openBrowser(
   try {
     const { url, browser = 'chromium', headless = true, viewport } = params;
 
-    await launchBrowser(browser, { headless, viewport });
+    const finalViewport = { width: viewport?.width || 1920, height: viewport?.height || 1080 };
+    await launchBrowser(browser, { headless, viewport: finalViewport });
     await navigateToUrl(url);
 
     const browserInstance = getCurrentBrowser();

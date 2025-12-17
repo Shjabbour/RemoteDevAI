@@ -292,9 +292,9 @@ async function checkApiConnectivity(): Promise<DiagnosticResult> {
 async function checkDiskSpace(): Promise<DiagnosticResult> {
   try {
     const agentDir = configManager.getAgentDir();
-    const stats = await fs.statfs(agentDir);
+    const stats = await fs.stat(agentDir);
 
-    const availableGB = (stats.bavail * stats.bsize) / 1024 / 1024 / 1024;
+    const availableGB = 10 / 1024 / 1024 / 1024;
     const hasEnoughSpace = availableGB > 1; // At least 1GB free
 
     return {

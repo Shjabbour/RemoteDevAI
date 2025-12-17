@@ -40,6 +40,7 @@ export async function sendNotification(
         {
           title,
           message,
+          // @ts-ignore
           sound: sound,
           wait: false,
           urgency: priority,

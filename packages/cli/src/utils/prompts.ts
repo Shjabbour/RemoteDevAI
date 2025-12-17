@@ -124,7 +124,7 @@ export function validateUrl(url: string): boolean | string {
  */
 export function validatePort(port: string): boolean | string {
   const portNum = parseInt(port, 10);
-  if (isNaN(portNum) || portNum < 1 || port > 65535) {
+  if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
     return 'Please enter a valid port number (1-65535)';
   }
   return true;
