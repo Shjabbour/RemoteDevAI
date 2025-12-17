@@ -141,14 +141,143 @@ const pairingCodes = new Map();
 // Failed pairing attempts by IP
 const failedPairingAttempts = new Map();
 
-// Usage statistics
+// Usage statistics (global)
 const usageStats = {
   totalConnections: 0,
   totalFramesRelayed: 0,
   totalCommandsExecuted: 0,
+  totalBytesRelayed: 0,
   peakAgents: 0,
-  peakViewers: 0
+  peakViewers: 0,
+  startTime: Date.now()
 };
+
+// ============== Usage Tracking for Billing ==============
+
+// Per-session usage tracking
+const sessionUsage = new Map(); // sessionId -> { agentId, startTime, endTime, bytesTransferred, framesRelayed, commandsExecuted }
+
+// Completed sessions for billing (kept for 24 hours)
+const completedSessions = [];
+
+// Billing webhook URL (optional)
+const BILLING_WEBHOOK_URL = process.env.BILLING_WEBHOOK_URL || null;
+const BILLING_WEBHOOK_SECRET = process.env.BILLING_WEBHOOK_SECRET || '';
+
+// Create a new usage session
+function createUsageSession(agentId, agentInfo) {
+  const sessionId = `sess_${nanoid(16)}`;
+  const session = {
+    sessionId,
+    agentId,
+    agentName: agentInfo.name,
+    agentHostname: agentInfo.hostname,
+    platform: agentInfo.platform,
+    startTime: Date.now(),
+    endTime: null,
+    duration: 0,
+    bytesTransferred: 0,
+    framesRelayed: 0,
+    commandsExecuted: 0,
+    peakViewers: 0,
+    viewerMinutes: 0, // Cumulative viewer time
+    events: []
+  };
+  sessionUsage.set(sessionId, session);
+  return sessionId;
+}
+
+// Record usage event
+function recordUsageEvent(sessionId, eventType, data = {}) {
+  const session = sessionUsage.get(sessionId);
+  if (!session) return;
+
+  session.events.push({
+    type: eventType,
+    timestamp: Date.now(),
+    data
+  });
+
+  // Update session metrics based on event type
+  switch (eventType) {
+    case 'frame':
+      session.framesRelayed++;
+      session.bytesTransferred += data.bytes || 0;
+      break;
+    case 'command':
+      session.commandsExecuted++;
+      break;
+    case 'viewer_joined':
+      if (data.viewerCount > session.peakViewers) {
+        session.peakViewers = data.viewerCount;
+      }
+      break;
+  }
+}
+
+// End a usage session
+function endUsageSession(sessionId) {
+  const session = sessionUsage.get(sessionId);
+  if (!session) return null;
+
+  session.endTime = Date.now();
+  session.duration = session.endTime - session.startTime;
+
+  // Move to completed sessions
+  completedSessions.push({ ...session });
+  sessionUsage.delete(sessionId);
+
+  // Send webhook if configured
+  if (BILLING_WEBHOOK_URL) {
+    sendBillingWebhook('session_ended', session).catch(err => {
+      console.error('[Billing] Webhook failed:', err.message);
+    });
+  }
+
+  return session;
+}
+
+// Send billing webhook
+async function sendBillingWebhook(event, data) {
+  if (!BILLING_WEBHOOK_URL) return;
+
+  const payload = {
+    event,
+    timestamp: new Date().toISOString(),
+    data
+  };
+
+  // Create signature
+  const signature = crypto
+    .createHmac('sha256', BILLING_WEBHOOK_SECRET)
+    .update(JSON.stringify(payload))
+    .digest('hex');
+
+  try {
+    const response = await fetch(BILLING_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Webhook-Signature': signature
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      console.error(`[Billing] Webhook returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error('[Billing] Webhook error:', error.message);
+  }
+}
+
+// Cleanup old completed sessions (keep 24 hours)
+setInterval(() => {
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  while (completedSessions.length > 0 && completedSessions[0].endTime < cutoff) {
+    completedSessions.shift();
+  }
+}, 60 * 60 * 1000); // Check every hour
 
 // ============== Security Functions ==============
 
@@ -240,7 +369,7 @@ function sanitizeCommand(command) {
 app.get('/', (req, res) => {
   res.json({
     service: 'RemoteDevAI Relay Server',
-    version: '2.0.0',
+    version: '2.1.0',
     status: 'running',
     environment: NODE_ENV,
     stats: {
@@ -367,6 +496,167 @@ app.post('/api/admin/agents/:id/disconnect', (req, res) => {
   res.json({ success: true, message: 'Agent disconnected' });
 });
 
+// ============== Billing API Endpoints ==============
+
+// Get current active sessions usage
+app.get('/api/admin/usage/active', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== `Bearer ${API_SECRET}`) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  const activeSessions = Array.from(sessionUsage.values()).map(session => ({
+    sessionId: session.sessionId,
+    agentId: session.agentId,
+    agentName: session.agentName,
+    platform: session.platform,
+    startTime: new Date(session.startTime).toISOString(),
+    durationSoFar: Date.now() - session.startTime,
+    bytesTransferred: session.bytesTransferred,
+    framesRelayed: session.framesRelayed,
+    commandsExecuted: session.commandsExecuted,
+    peakViewers: session.peakViewers
+  }));
+
+  res.json({
+    success: true,
+    activeSessions,
+    count: activeSessions.length
+  });
+});
+
+// Get completed sessions (for billing)
+app.get('/api/admin/usage/completed', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== `Bearer ${API_SECRET}`) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  // Optional filtering by time range
+  const since = req.query.since ? parseInt(req.query.since, 10) : 0;
+  const until = req.query.until ? parseInt(req.query.until, 10) : Date.now();
+
+  const filteredSessions = completedSessions.filter(session =>
+    session.endTime >= since && session.endTime <= until
+  ).map(session => ({
+    sessionId: session.sessionId,
+    agentId: session.agentId,
+    agentName: session.agentName,
+    agentHostname: session.agentHostname,
+    platform: session.platform,
+    startTime: new Date(session.startTime).toISOString(),
+    endTime: new Date(session.endTime).toISOString(),
+    duration: session.duration,
+    durationMinutes: Math.round(session.duration / 60000 * 100) / 100,
+    bytesTransferred: session.bytesTransferred,
+    bytesTransferredMB: Math.round(session.bytesTransferred / 1024 / 1024 * 100) / 100,
+    framesRelayed: session.framesRelayed,
+    commandsExecuted: session.commandsExecuted,
+    peakViewers: session.peakViewers
+  }));
+
+  // Calculate totals
+  const totals = filteredSessions.reduce((acc, session) => ({
+    totalDuration: acc.totalDuration + session.duration,
+    totalBytes: acc.totalBytes + session.bytesTransferred,
+    totalFrames: acc.totalFrames + session.framesRelayed,
+    totalCommands: acc.totalCommands + session.commandsExecuted
+  }), { totalDuration: 0, totalBytes: 0, totalFrames: 0, totalCommands: 0 });
+
+  res.json({
+    success: true,
+    sessions: filteredSessions,
+    count: filteredSessions.length,
+    totals: {
+      ...totals,
+      totalDurationMinutes: Math.round(totals.totalDuration / 60000 * 100) / 100,
+      totalBytesMB: Math.round(totals.totalBytes / 1024 / 1024 * 100) / 100
+    }
+  });
+});
+
+// Get usage summary (for dashboard)
+app.get('/api/admin/usage/summary', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== `Bearer ${API_SECRET}`) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  const now = Date.now();
+  const hourAgo = now - 60 * 60 * 1000;
+  const dayAgo = now - 24 * 60 * 60 * 1000;
+
+  // Calculate stats for different time periods
+  const lastHourSessions = completedSessions.filter(s => s.endTime >= hourAgo);
+  const lastDaySessions = completedSessions.filter(s => s.endTime >= dayAgo);
+
+  const calculatePeriodStats = (sessions) => ({
+    sessionCount: sessions.length,
+    totalDurationMinutes: Math.round(sessions.reduce((sum, s) => sum + s.duration, 0) / 60000 * 100) / 100,
+    totalBytesMB: Math.round(sessions.reduce((sum, s) => sum + s.bytesTransferred, 0) / 1024 / 1024 * 100) / 100,
+    totalFrames: sessions.reduce((sum, s) => sum + s.framesRelayed, 0),
+    totalCommands: sessions.reduce((sum, s) => sum + s.commandsExecuted, 0)
+  });
+
+  res.json({
+    success: true,
+    current: {
+      activeAgents: agents.size,
+      activeViewers: viewers.size,
+      activeSessions: sessionUsage.size
+    },
+    lastHour: calculatePeriodStats(lastHourSessions),
+    last24Hours: calculatePeriodStats(lastDaySessions),
+    allTime: {
+      totalConnections: usageStats.totalConnections,
+      totalFramesRelayed: usageStats.totalFramesRelayed,
+      totalCommandsExecuted: usageStats.totalCommandsExecuted,
+      totalBytesMB: Math.round(usageStats.totalBytesRelayed / 1024 / 1024 * 100) / 100,
+      peakAgents: usageStats.peakAgents,
+      peakViewers: usageStats.peakViewers,
+      uptimeHours: Math.round((now - usageStats.startTime) / 3600000 * 100) / 100
+    }
+  });
+});
+
+// Export sessions as CSV (for accounting)
+app.get('/api/admin/usage/export', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== `Bearer ${API_SECRET}`) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  const since = req.query.since ? parseInt(req.query.since, 10) : 0;
+  const until = req.query.until ? parseInt(req.query.until, 10) : Date.now();
+
+  const filteredSessions = completedSessions.filter(session =>
+    session.endTime >= since && session.endTime <= until
+  );
+
+  // Generate CSV
+  const headers = ['Session ID', 'Agent ID', 'Agent Name', 'Hostname', 'Platform', 'Start Time', 'End Time', 'Duration (min)', 'Bytes (MB)', 'Frames', 'Commands', 'Peak Viewers'];
+  const rows = filteredSessions.map(s => [
+    s.sessionId,
+    s.agentId,
+    s.agentName,
+    s.agentHostname,
+    s.platform,
+    new Date(s.startTime).toISOString(),
+    new Date(s.endTime).toISOString(),
+    (s.duration / 60000).toFixed(2),
+    (s.bytesTransferred / 1024 / 1024).toFixed(2),
+    s.framesRelayed,
+    s.commandsExecuted,
+    s.peakViewers
+  ]);
+
+  const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename=usage-${new Date().toISOString().split('T')[0]}.csv`);
+  res.send(csv);
+});
+
 // ============== WebSocket Handlers ==============
 
 io.on('connection', (socket) => {
@@ -388,20 +678,26 @@ io.on('connection', (socket) => {
     const pairingCode = generatePairingCode();
     const authToken = generateAuthToken();
 
+    const info = {
+      name: String(data.name || 'Desktop Agent').slice(0, 100),
+      hostname: String(data.hostname || 'unknown').slice(0, 100),
+      platform: String(data.platform || 'unknown').slice(0, 50),
+      version: String(data.version || '1.0.0').slice(0, 20),
+      capabilities: data.capabilities || {}
+    };
+
+    // Create usage session for billing
+    const usageSessionId = createUsageSession(agentId, info);
+
     const agentInfo = {
       socket,
-      info: {
-        name: String(data.name || 'Desktop Agent').slice(0, 100),
-        hostname: String(data.hostname || 'unknown').slice(0, 100),
-        platform: String(data.platform || 'unknown').slice(0, 50),
-        version: String(data.version || '1.0.0').slice(0, 20),
-        capabilities: data.capabilities || {}
-      },
+      info,
       connectedAt: new Date().toISOString(),
       viewers: new Set(),
       pairingCode,
       authToken,
-      ip
+      ip,
+      usageSessionId
     };
 
     agents.set(agentId, agentInfo);
@@ -465,7 +761,18 @@ io.on('connection', (socket) => {
     const agent = agents.get(socket.agentId);
     if (!agent) return;
 
+    // Calculate frame size for billing
+    const frameSize = typeof frameData === 'string'
+      ? frameData.length
+      : (frameData.data ? frameData.data.length : 0);
+
     usageStats.totalFramesRelayed++;
+    usageStats.totalBytesRelayed += frameSize;
+
+    // Record for session billing
+    if (agent.usageSessionId) {
+      recordUsageEvent(agent.usageSessionId, 'frame', { bytes: frameSize });
+    }
 
     // Broadcast frame to all viewers of this agent
     agent.viewers.forEach(viewerId => {
@@ -640,6 +947,14 @@ io.on('connection', (socket) => {
       viewerId,
       viewerCount: agent.viewers.size
     });
+
+    // Record for session billing
+    if (agent.usageSessionId) {
+      recordUsageEvent(agent.usageSessionId, 'viewer_joined', {
+        viewerId,
+        viewerCount: agent.viewers.size
+      });
+    }
   });
 
   // Viewer requests screen stream
@@ -801,6 +1116,11 @@ io.on('connection', (socket) => {
 
     const agent = agents.get(socket.agentId);
     if (agent) {
+      // Record for session billing
+      if (agent.usageSessionId) {
+        recordUsageEvent(agent.usageSessionId, 'command', { command: command.slice(0, 100) });
+      }
+
       agent.socket.emit('execute-command', {
         command,
         sessionId: data.sessionId
@@ -816,6 +1136,14 @@ io.on('connection', (socket) => {
     if (socket.role === 'agent' && socket.agentId) {
       const agent = agents.get(socket.agentId);
       if (agent) {
+        // End usage session for billing
+        if (agent.usageSessionId) {
+          const session = endUsageSession(agent.usageSessionId);
+          if (session) {
+            console.log(`[Billing] Session ended: ${session.sessionId}, duration: ${Math.round(session.duration / 1000)}s, bytes: ${session.bytesTransferred}, frames: ${session.framesRelayed}`);
+          }
+        }
+
         // Notify all viewers that agent disconnected
         agent.viewers.forEach(viewerId => {
           const viewer = viewers.get(viewerId);
@@ -911,7 +1239,7 @@ process.on('SIGINT', () => shutdown('SIGINT'));
 httpServer.listen(PORT, '0.0.0.0', () => {
   console.log('');
   console.log('=================================================');
-  console.log('  RemoteDevAI Relay Server v2.0.0 - RUNNING');
+  console.log('  RemoteDevAI Relay Server v2.1.0 - RUNNING');
   console.log('=================================================');
   console.log(`  Environment: ${NODE_ENV}`);
   console.log(`  Port: ${PORT}`);
@@ -924,6 +1252,12 @@ httpServer.listen(PORT, '0.0.0.0', () => {
   console.log('  - Brute-force protection');
   console.log(`  - Max ${MAX_VIEWERS_PER_AGENT} viewers per agent`);
   console.log(`  - Pairing codes expire in ${PAIRING_CODE_EXPIRY_MS / 1000 / 60} minutes`);
+  console.log('');
+  console.log('  Billing Features:');
+  console.log('  - Per-session usage tracking');
+  console.log('  - Bytes/frames/commands metrics');
+  console.log('  - Webhook notifications');
+  console.log('  - CSV export for accounting');
   console.log('');
   console.log('  This server relays connections between:');
   console.log('  - Desktop agents (your computer)');
