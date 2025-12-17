@@ -5,20 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>RemoteDevAI Mobile</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d1117">
+    <title>RemoteDevAI</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <!-- Pairing Code Modal -->
+    <div class="pairing-modal" id="pairingModal">
+        <div class="pairing-content">
+            <div class="pairing-header">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+                <h2>Enter Pairing Code</h2>
+                <p>Enter the 8-character code from your desktop agent</p>
+            </div>
+            <div class="pairing-input-group">
+                <input
+                    type="text"
+                    id="pairingCodeInput"
+                    class="pairing-input"
+                    placeholder="ABCD1234"
+                    maxlength="8"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                >
+                <div class="pairing-error" id="pairingError" style="display: none;"></div>
+            </div>
+            <button class="btn-primary btn-large" id="connectPairingBtn">
+                Connect
+            </button>
+        </div>
+    </div>
+
     <div class="container">
-        <!-- Header with connection status -->
+        <!-- Header with connection status and tabs -->
         <header>
             <div class="status-bar">
                 <div class="status-indicator" id="statusIndicator">
                     <span class="status-dot"></span>
                     <span class="status-text">Disconnected</span>
                 </div>
-                <button class="settings-btn" id="settingsBtn" aria-label="Settings">⚙️</button>
+                <div class="header-actions">
+                    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
+            <!-- Tab navigation -->
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="screen">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    <span>Screen</span>
+                </button>
+                <button class="tab-btn" data-tab="terminal">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                    <span>Terminal</span>
+                </button>
+                <button class="tab-btn" data-tab="voice">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                    <span>Voice</span>
+                </button>
+            </nav>
         </header>
 
         <!-- Settings panel -->
@@ -27,48 +95,136 @@
                 <h3>Connection Settings</h3>
                 <label for="serverIp">Server Address:</label>
                 <input type="text" id="serverIp" placeholder="192.168.1.100:3456">
-                <button class="btn-primary" id="saveSettings">Save & Connect</button>
-                <button class="btn-secondary" id="closeSettings">Cancel</button>
+
+                <h4>Stream Settings</h4>
+                <label for="streamFps">FPS: <span id="fpsValue">10</span></label>
+                <input type="range" id="streamFps" min="1" max="30" value="10">
+
+                <label for="streamQuality">Quality: <span id="qualityValue">50</span></label>
+                <input type="range" id="streamQuality" min="10" max="100" value="50">
+
+                <div class="settings-buttons">
+                    <button class="btn-primary" id="saveSettings">Save & Connect</button>
+                    <button class="btn-secondary" id="closeSettings">Cancel</button>
+                </div>
             </div>
         </div>
 
-        <!-- Messages area -->
-        <main class="messages-container" id="messagesContainer">
-            <div class="welcome-message">
-                <h2>RemoteDevAI</h2>
-                <p>Connect to your desktop agent to start</p>
-                <p class="hint">Tap ⚙️ to configure server address</p>
+        <!-- Screen View Tab -->
+        <main class="tab-content active" id="screenTab">
+            <div class="screen-container" id="screenContainer">
+                <div class="screen-placeholder" id="screenPlaceholder">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    <p>Tap to view desktop screen</p>
+                    <p class="hint">Connect to start screen sharing</p>
+                </div>
+                <canvas id="screenCanvas" style="display: none;"></canvas>
+                <div class="screen-overlay" id="screenOverlay">
+                    <div class="cursor-indicator" id="cursorIndicator"></div>
+                </div>
+            </div>
+            <div class="screen-controls">
+                <button class="control-btn" id="screenToggleBtn" title="Start/Stop Screen">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </button>
+                <button class="control-btn" id="fullscreenBtn" title="Fullscreen">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                </button>
+                <button class="control-btn" id="inputToggleBtn" title="Toggle Input Control">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </button>
+                <button class="control-btn" id="keyboardBtn" title="Show Keyboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                        <line x1="6" y1="8" x2="6" y2="8"></line>
+                        <line x1="10" y1="8" x2="10" y2="8"></line>
+                        <line x1="14" y1="8" x2="14" y2="8"></line>
+                        <line x1="18" y1="8" x2="18" y2="8"></line>
+                        <line x1="6" y1="12" x2="6" y2="12"></line>
+                        <line x1="10" y1="12" x2="10" y2="12"></line>
+                        <line x1="14" y1="12" x2="14" y2="12"></line>
+                        <line x1="18" y1="12" x2="18" y2="12"></line>
+                        <line x1="6" y1="16" x2="18" y2="16"></line>
+                    </svg>
+                </button>
+                <select id="displaySelect" class="display-select">
+                    <option value="0">Display 1</option>
+                </select>
+            </div>
+            <!-- Hidden keyboard input -->
+            <input type="text" id="hiddenKeyboardInput" class="hidden-keyboard" autocomplete="off" autocorrect="off" autocapitalize="off">
+        </main>
+
+        <!-- Terminal Tab -->
+        <main class="tab-content" id="terminalTab">
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message">
+                    <h2>RemoteDevAI</h2>
+                    <p>Control Claude Code from your phone</p>
+                    <p class="hint">Type commands or use voice input</p>
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea
+                        id="messageInput"
+                        placeholder="Type a command..."
+                        rows="1"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                    ></textarea>
+                    <button class="voice-btn" id="voiceBtn" aria-label="Voice input">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="23"></line>
+                            <line x1="8" y1="23" x2="16" y2="23"></line>
+                        </svg>
+                    </button>
+                    <button class="send-btn" id="sendBtn" aria-label="Send">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </main>
 
-        <!-- Input area -->
-        <footer class="input-area">
-            <div class="input-wrapper">
-                <textarea
-                    id="messageInput"
-                    placeholder="Type a command..."
-                    rows="1"
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                ></textarea>
-                <button class="voice-btn" id="voiceBtn" aria-label="Voice input">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                        <line x1="12" y1="19" x2="12" y2="23"></line>
-                        <line x1="8" y1="23" x2="16" y2="23"></line>
-                    </svg>
-                </button>
-                <button class="send-btn" id="sendBtn" aria-label="Send">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </button>
+        <!-- Voice Tab -->
+        <main class="tab-content" id="voiceTab">
+            <div class="voice-container">
+                <div class="voice-status" id="voiceStatus">
+                    <div class="voice-circle" id="voiceCircle">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="23"></line>
+                            <line x1="8" y1="23" x2="16" y2="23"></line>
+                        </svg>
+                    </div>
+                    <p class="voice-text" id="voiceText">Tap to speak</p>
+                </div>
+                <div class="voice-transcript" id="voiceTranscript"></div>
+                <div class="voice-response" id="voiceResponse"></div>
             </div>
-        </footer>
+        </main>
     </div>
 
     <script src="app.js"></script>
