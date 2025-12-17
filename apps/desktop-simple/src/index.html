@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemoteDevAI Desktop Agent - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .status.connected {
+            background: #10b981;
+        }
+
+        .status.disconnected {
+            background: #ef4444;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .info-card p {
+            color: #333;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .command-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-commands {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-command {
+            padding: 8px 16px;
+            background: #e5e7eb;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-command:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .output-line {
+            margin-bottom: 5px;
+        }
+
+        .output-line.stdout {
+            color: #d4d4d4;
+        }
+
+        .output-line.stderr {
+            color: #f87171;
+        }
+
+        .output-line.error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .output-line.complete {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .timestamp {
+            color: #9ca3af;
+            font-size: 0.85em;
+        }
+
+        .clear-btn {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #ef4444;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .network-info {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .network-info h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+
+        .network-info code {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RemoteDevAI Desktop Agent</h1>
+            <p>Claude Code CLI Relay Server</p>
+            <div class="status disconnected" id="status">Disconnected</div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>Server Information</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Status</h3>
+                        <p id="server-status">Loading...</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Active Sessions</h3>
+                        <p id="active-sessions">0</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Uptime</h3>
+                        <p id="uptime">0s</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Platform</h3>
+                        <p id="platform">-</p>
+                    </div>
+                </div>
+
+                <div class="network-info">
+                    <h3>Mobile Connection Instructions</h3>
+                    <p>Connect from your mobile device to:</p>
+                    <div id="network-urls" style="margin-top: 10px;">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Send Command to Claude</h2>
+                <div class="command-input">
+                    <input type="text" id="commandInput" placeholder="Enter Claude command (e.g., 'What files are in this directory?')" />
+                    <button id="sendBtn" onclick="sendCommand()">Send Command</button>
+                </div>
+
+                <div class="quick-commands">
+                    <div class="quick-command" onclick="sendQuickCommand('/help')">Help</div>
+                    <div class="quick-command" onclick="sendQuickCommand('List all files in the current directory')">List Files</div>
+                    <div class="quick-command" onclick="sendQuickCommand('Show git status')">Git Status</div>
+                    <div class="quick-command" onclick="sendQuickCommand('What is in package.json?')">Read package.json</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Output Stream</h2>
+                <div class="output" id="output">
+                    <div class="output-line">Waiting for commands...</div>
+                </div>
+                <button class="clear-btn" onclick="clearOutput()">Clear Output</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const statusEl = document.getElementById('status');
+        const outputEl = document.getElementById('output');
+        const commandInput = document.getElementById('commandInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Connection status
+        socket.on('connect', () => {
+            statusEl.textContent = 'Connected';
+            statusEl.className = 'status connected';
+            addOutput('System', 'Connected to desktop agent', 'complete');
+        });
+
+        socket.on('disconnect', () => {
+            statusEl.textContent = 'Disconnected';
+            statusEl.className = 'status disconnected';
+            addOutput('System', 'Disconnected from desktop agent', 'error');
+        });
+
+        socket.on('connected', (data) => {
+            console.log('Connected:', data);
+            addOutput('System', `Session ID: ${data.sessionId}`, 'complete');
+            addOutput('System', `Hostname: ${data.hostname}`, 'complete');
+        });
+
+        // Command output
+        socket.on('command-output', (data) => {
+            addOutput(data.type, data.data, 'stdout');
+        });
+
+        socket.on('command-error', (data) => {
+            addOutput(data.type, data.data, 'stderr');
+        });
+
+        socket.on('command-complete', (data) => {
+            addOutput('System', `Command completed with exit code: ${data.code}`, 'complete');
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send Command';
+        });
+
+        // Fetch server health
+        async function fetchHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+
+                document.getElementById('server-status').textContent = data.status.toUpperCase();
+                document.getElementById('active-sessions').textContent = data.activeSessions;
+                document.getElementById('uptime').textContent = Math.floor(data.uptime) + 's';
+                document.getElementById('platform').textContent = data.platform;
+
+                // Display network URLs
+                if (data.localIPs && data.localIPs.length > 0) {
+                    const urlsHtml = data.localIPs.map(ip =>
+                        `<p>📱 <code>http://${ip}:${window.location.port}</code></p>`
+                    ).join('');
+                    document.getElementById('network-urls').innerHTML = urlsHtml;
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+
+        // Send command
+        async function sendCommand() {
+            const command = commandInput.value.trim();
+            if (!command) return;
+
+            addOutput('User', command, 'stdout');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="loading"></span> Executing...';
+
+            socket.emit('execute-command', { command });
+            commandInput.value = '';
+        }
+
+        // Quick command
+        function sendQuickCommand(command) {
+            commandInput.value = command;
+            sendCommand();
+        }
+
+        // Add output line
+        function addOutput(source, text, type) {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.innerHTML = `<span class="timestamp">[${timestamp}]</span> <strong>${source}:</strong> ${escapeHtml(text)}`;
+            outputEl.appendChild(line);
+            outputEl.scrollTop = outputEl.scrollHeight;
+        }
+
+        // Clear output
+        function clearOutput() {
+            outputEl.innerHTML = '<div class="output-line">Output cleared...</div>';
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enter key to send
+        commandInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !sendBtn.disabled) {
+                sendCommand();
+            }
+        });
+
+        // Initial health check
+        fetchHealth();
+        setInterval(fetchHealth, 5000);
+    </script>
+</body>
+</html>

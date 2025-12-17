@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>RemoteDevAI Mobile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with connection status -->
+        <header>
+            <div class="status-bar">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Disconnected</span>
+                </div>
+                <button class="settings-btn" id="settingsBtn" aria-label="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Settings panel -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-content">
+                <h3>Connection Settings</h3>
+                <label for="serverIp">Server Address:</label>
+                <input type="text" id="serverIp" placeholder="192.168.1.100:3456">
+                <button class="btn-primary" id="saveSettings">Save & Connect</button>
+                <button class="btn-secondary" id="closeSettings">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Messages area -->
+        <main class="messages-container" id="messagesContainer">
+            <div class="welcome-message">
+                <h2>RemoteDevAI</h2>
+                <p>Connect to your desktop agent to start</p>
+                <p class="hint">Tap ⚙️ to configure server address</p>
+            </div>
+        </main>
+
+        <!-- Input area -->
+        <footer class="input-area">
+            <div class="input-wrapper">
+                <textarea
+                    id="messageInput"
+                    placeholder="Type a command..."
+                    rows="1"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                ></textarea>
+                <button class="voice-btn" id="voiceBtn" aria-label="Voice input">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
+                <button class="send-btn" id="sendBtn" aria-label="Send">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

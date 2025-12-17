@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemoteDevAI Mobile Client Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .status.connected {
+            background: #10b981;
+        }
+
+        .status.disconnected {
+            background: #ef4444;
+        }
+
+        .connection-form {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9ca3af;
+            font-size: 0.9em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background: #4a4a4a;
+            cursor: not-allowed;
+        }
+
+        .chat-container {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #667eea;
+            margin-left: 20%;
+        }
+
+        .message.assistant {
+            background: #2a2a2a;
+            margin-right: 20%;
+        }
+
+        .message.system {
+            background: #1e3a8a;
+            text-align: center;
+            font-size: 0.85em;
+            color: #93c5fd;
+        }
+
+        .message.error {
+            background: #7f1d1d;
+            text-align: center;
+            font-size: 0.85em;
+            color: #fca5a5;
+        }
+
+        .timestamp {
+            font-size: 0.75em;
+            color: #9ca3af;
+            margin-top: 5px;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+        }
+
+        .chat-input button {
+            width: auto;
+            margin: 0;
+            padding: 12px 25px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-action {
+            padding: 12px;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-action:active {
+            transform: scale(0.95);
+            background: #3a3a3a;
+        }
+
+        .info {
+            background: #1e3a8a;
+            color: #93c5fd;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 RemoteDevAI Mobile</h1>
+        <div class="status disconnected" id="status">Disconnected</div>
+    </div>
+
+    <div class="info" id="info" style="display: none;">
+        Connected to: <strong id="hostname">-</strong>
+    </div>
+
+    <div class="connection-form" id="connectionForm">
+        <div class="form-group">
+            <label>Desktop Agent URL</label>
+            <input type="text" id="serverUrl" placeholder="http://192.168.1.100:3456" value="http://localhost:3456">
+        </div>
+        <button id="connectBtn" onclick="connect()">Connect</button>
+    </div>
+
+    <div style="display: none;" id="chatInterface">
+        <div class="quick-actions">
+            <div class="quick-action" onclick="sendQuick('List all files')">📁 List Files</div>
+            <div class="quick-action" onclick="sendQuick('Show git status')">🔀 Git Status</div>
+            <div class="quick-action" onclick="sendQuick('What is this project?')">❓ About Project</div>
+            <div class="quick-action" onclick="sendQuick('Show package.json')">📦 Package Info</div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="messages"></div>
+            <div class="chat-input">
+                <input type="text" id="commandInput" placeholder="Ask Claude anything...">
+                <button id="sendBtn" onclick="sendCommand()">Send</button>
+            </div>
+        </div>
+
+        <button onclick="disconnect()" style="background: #ef4444;">Disconnect</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = null;
+        const messages = [];
+
+        function connect() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            if (!serverUrl) {
+                alert('Please enter server URL');
+                return;
+            }
+
+            addSystemMessage('Connecting to ' + serverUrl + '...');
+
+            socket = io(serverUrl);
+
+            socket.on('connect', () => {
+                updateStatus('Connected', true);
+                document.getElementById('connectionForm').style.display = 'none';
+                document.getElementById('chatInterface').style.display = 'block';
+                addSystemMessage('Connected successfully!');
+            });
+
+            socket.on('connected', (data) => {
+                document.getElementById('info').style.display = 'block';
+                document.getElementById('hostname').textContent = data.hostname;
+                addSystemMessage('Session ID: ' + data.sessionId);
+            });
+
+            socket.on('disconnect', () => {
+                updateStatus('Disconnected', false);
+                addErrorMessage('Disconnected from server');
+            });
+
+            socket.on('command-output', (data) => {
+                addAssistantMessage(data.data);
+            });
+
+            socket.on('command-error', (data) => {
+                addErrorMessage(data.data);
+            });
+
+            socket.on('command-complete', (data) => {
+                addSystemMessage('Command completed (exit code: ' + data.code + ')');
+                document.getElementById('sendBtn').disabled = false;
+            });
+
+            socket.on('connect_error', (error) => {
+                addErrorMessage('Connection failed: ' + error.message);
+                updateStatus('Disconnected', false);
+            });
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+            document.getElementById('connectionForm').style.display = 'block';
+            document.getElementById('chatInterface').style.display = 'none';
+            document.getElementById('info').style.display = 'none';
+            updateStatus('Disconnected', false);
+            clearMessages();
+        }
+
+        function sendCommand() {
+            const input = document.getElementById('commandInput');
+            const command = input.value.trim();
+
+            if (!command || !socket) return;
+
+            addUserMessage(command);
+            socket.emit('execute-command', { command });
+            input.value = '';
+
+            document.getElementById('sendBtn').disabled = true;
+        }
+
+        function sendQuick(command) {
+            document.getElementById('commandInput').value = command;
+            sendCommand();
+        }
+
+        function updateStatus(text, connected) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = text;
+            statusEl.className = 'status ' + (connected ? 'connected' : 'disconnected');
+        }
+
+        function addMessage(type, text) {
+            const messagesEl = document.getElementById('messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message ' + type;
+
+            const textEl = document.createElement('div');
+            textEl.textContent = text;
+
+            const timeEl = document.createElement('div');
+            timeEl.className = 'timestamp';
+            timeEl.textContent = new Date().toLocaleTimeString();
+
+            messageEl.appendChild(textEl);
+            messageEl.appendChild(timeEl);
+            messagesEl.appendChild(messageEl);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function addUserMessage(text) {
+            addMessage('user', text);
+        }
+
+        function addAssistantMessage(text) {
+            addMessage('assistant', text);
+        }
+
+        function addSystemMessage(text) {
+            addMessage('system', text);
+        }
+
+        function addErrorMessage(text) {
+            addMessage('error', text);
+        }
+
+        function clearMessages() {
+            document.getElementById('messages').innerHTML = '';
+        }
+
+        // Enter to send
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('commandInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !document.getElementById('sendBtn').disabled) {
+                    sendCommand();
+                }
+            });
+
+            document.getElementById('serverUrl').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    connect();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

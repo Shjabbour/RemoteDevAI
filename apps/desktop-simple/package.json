@@ -1,0 +1,25 @@
+{
+  "name": "@remotedevai/desktop-simple",
+  "version": "1.0.0",
+  "description": "Simple desktop agent that relays commands to Claude Code CLI",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test-server.js"
+  },
+  "keywords": [
+    "claude",
+    "remote",
+    "ai",
+    "desktop-agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1",
+    "cors": "^2.8.5"
+  }
+}
