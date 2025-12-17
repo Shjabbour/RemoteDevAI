@@ -1,0 +1,1422 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - manages user accounts
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?   // Optional, if using Clerk this might be null
+  clerkId       String?   @unique // Clerk user ID
+  avatarUrl     String?
+
+  // Subscription
+  subscriptionTier  SubscriptionTier @default(FREE)
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastSeenAt    DateTime  @default(now())
+
+  // Relations
+  projects      Project[]
+  sessions      Session[]
+  subscription  Subscription?
+  desktopAgents DesktopAgent[]
+  apiKeys       ApiKey[]
+  files         File[]
+  storageQuota  StorageQuota?
+  userStats     UserStats?
+  preferences   UserPreferences?
+  auditLogs     AuditLog[]
+  usageRecords  UsageRecord[]
+  dailyUsage    DailyUsage[]
+  monthlyUsage  MonthlyUsage[]
+  usageAlerts   UsageAlert[]
+  ownedTeams    Team[]          @relation("TeamOwner")
+  notifications Notification[]
+  notificationPreferences NotificationPreferences?
+  pushSubscriptions PushSubscription[]
+  backups       Backup[]
+  exportJobs    ExportJob[]
+  importJobs    ImportJob[]
+  webhooks      Webhook[]
+  teamMemberships TeamMember[]
+  activityLogs  ActivityLog[]
+
+  @@index([email])
+  @@index([clerkId])
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  TEAM
+  ENTERPRISE
+}
+
+// Subscription model - manages payment subscriptions
+model Subscription {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Stripe
+  stripeCustomerId      String?   @unique
+  stripeSubscriptionId  String?   @unique
+  stripePriceId         String?
+
+  // Subscription details
+  tier            SubscriptionTier @default(FREE)
+  status          SubscriptionStatus @default(ACTIVE)
+
+  // Billing
+  currentPeriodStart  DateTime?
+  currentPeriodEnd    DateTime?
+  cancelAtPeriodEnd   Boolean   @default(false)
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  TRIALING
+}
+
+// Project model - represents a coding project
+model Project {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+
+  // Settings
+  settings    Json      @default("{}")
+
+  // Status
+  isActive    Boolean   @default(true)
+  isArchived  Boolean   @default(false)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  sessions    Session[]
+  files       File[]
+  teamProjects TeamProject[]
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
+// Session model - represents a coding session with AI
+model Session {
+  id          String    @id @default(uuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Session details
+  title       String?
+  summary     String?
+
+  // Messages/Conversation
+  messages    Json      @default("[]") // Array of message objects
+
+  // Session status
+  status      SessionStatus @default(ACTIVE)
+
+  // Timestamps
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  recordings  Recording[]
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SessionStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+// Recording model - stores video/screen recordings
+model Recording {
+  id          String    @id @default(uuid())
+  sessionId   String
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Recording details
+  title       String?
+  url         String    // S3/R2 URL
+  thumbnailUrl String?
+
+  // Metadata
+  duration    Int?      // Duration in seconds
+  fileSize    Int?      // Size in bytes
+  mimeType    String    @default("video/webm")
+
+  // Processing status
+  status      RecordingStatus @default(UPLOADING)
+
+  // Timestamps
+  recordedAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sessionId])
+  @@index([status])
+}
+
+enum RecordingStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+}
+
+// DesktopAgent model - tracks connected desktop agents
+model DesktopAgent {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Agent details
+  name        String    @default("Desktop Agent")
+  version     String?
+  platform    String?   // windows, macos, linux
+
+  // Connection
+  status      AgentStatus @default(OFFLINE)
+  socketId    String?   // Current Socket.IO connection ID
+  ipAddress   String?
+
+  // Timestamps
+  lastSeenAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum AgentStatus {
+  ONLINE
+  OFFLINE
+  BUSY
+}
+
+// ApiKey model - for API authentication
+model ApiKey {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  key         String    @unique // Hashed API key
+
+  // Permissions
+  permissions Json      @default("[]") // Array of permission strings
+
+  // Status
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+
+  // Expiry
+  expiresAt   DateTime?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([key])
+}
+
+// WebhookEvent model - stores webhook events for debugging
+model WebhookEvent {
+  id          String    @id @default(uuid())
+
+  source      String    // stripe, clerk, etc.
+  eventType   String
+  payload     Json
+
+  processed   Boolean   @default(false)
+  processedAt DateTime?
+  error       String?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([source, eventType])
+  @@index([processed])
+  @@index([createdAt])
+}
+
+// ========================
+// ANALYTICS & MONITORING
+// ========================
+
+// AnalyticsEvent model - tracks user and system events
+model AnalyticsEvent {
+  id          String    @id @default(uuid())
+
+  // Event details
+  eventType   String    // login, logout, project_create, session_start, api_request, etc.
+  eventName   String    // Descriptive name
+  category    EventCategory @default(USER)
+
+  // User/Actor
+  userId      String?
+  sessionId   String?
+
+  // Request details (for API events)
+  endpoint    String?
+  method      String?   // GET, POST, etc.
+  statusCode  Int?
+  duration    Int?      // Duration in milliseconds
+  responseSize Int?     // Response size in bytes
+
+  // Agent events
+  agentId     String?
+  agentStatus String?
+
+  // Error tracking
+  errorType   String?
+  errorMessage String?
+  errorStack  String?   @db.Text
+
+  // Additional metadata
+  userAgent   String?
+  ipAddress   String?
+  country     String?
+  city        String?
+  metadata    Json      @default("{}")
+
+  // Privacy settings
+  anonymized  Boolean   @default(false)
+
+  // Timestamp
+  createdAt   DateTime  @default(now())
+
+  @@index([eventType])
+  @@index([category])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+enum EventCategory {
+  USER        // User actions (login, signup, etc.)
+  API         // API requests
+  AGENT       // Agent events (connect, disconnect, etc.)
+  SYSTEM      // System events
+  ERROR       // Error events
+  PAYMENT     // Payment/subscription events
+}
+
+// DailyStats model - aggregated daily statistics
+model DailyStats {
+  id          String    @id @default(uuid())
+
+  // Date for this stat
+  date        DateTime  @unique @db.Date
+
+  // API metrics
+  totalRequests      Int      @default(0)
+  successfulRequests Int      @default(0)
+  failedRequests     Int      @default(0)
+  avgResponseTime    Float    @default(0)
+  totalResponseSize  BigInt   @default(0)
+
+  // User metrics
+  activeUsers        Int      @default(0)
+  newUsers           Int      @default(0)
+  totalLogins        Int      @default(0)
+
+  // Project/Session metrics
+  projectsCreated    Int      @default(0)
+  sessionsStarted    Int      @default(0)
+  sessionsCompleted  Int      @default(0)
+  totalSessionTime   Int      @default(0) // Total session time in minutes
+
+  // Agent metrics
+  agentsConnected    Int      @default(0)
+  agentsDisconnected Int      @default(0)
+  avgAgentUptime     Float    @default(0)
+
+  // Error metrics
+  totalErrors        Int      @default(0)
+  criticalErrors     Int      @default(0)
+
+  // Revenue metrics (in cents)
+  revenue            BigInt   @default(0)
+  newSubscriptions   Int      @default(0)
+  canceledSubscriptions Int   @default(0)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([date])
+}
+
+// UserStats model - per-user statistics
+model UserStats {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Activity metrics
+  totalLogins        Int      @default(0)
+  totalSessions      Int      @default(0)
+  totalProjects      Int      @default(0)
+  totalApiRequests   Int      @default(0)
+
+  // Usage metrics
+  totalSessionTime   Int      @default(0) // in minutes
+  avgSessionTime     Float    @default(0) // in minutes
+  totalStorageUsed   BigInt   @default(0) // in bytes
+
+  // Engagement
+  lastLoginAt        DateTime?
+  lastActiveAt       DateTime?
+  activeDays         Int      @default(0) // Number of days user was active
+
+  // Feature usage
+  recordingsCreated  Int      @default(0)
+  agentsConnected    Int      @default(0)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([lastActiveAt])
+}
+
+// ErrorLog model - detailed error tracking
+model ErrorLog {
+  id          String    @id @default(uuid())
+
+  // Error details
+  errorType   String    // validation, authentication, server, external_api, etc.
+  errorCode   String?   // Custom error code
+  message     String
+  stack       String?   @db.Text
+
+  // Context
+  userId      String?
+  sessionId   String?
+  endpoint    String?
+  method      String?
+
+  // Request details
+  requestBody    Json?
+  requestHeaders Json?
+  requestQuery   Json?
+
+  // Environment
+  environment    String    @default("production")
+  version        String?
+  userAgent      String?
+  ipAddress      String?
+
+  // Severity
+  severity       ErrorSeverity @default(ERROR)
+
+  // Resolution
+  resolved       Boolean   @default(false)
+  resolvedAt     DateTime?
+  resolvedBy     String?
+  resolution     String?
+
+  // Occurrence tracking
+  occurrences    Int       @default(1)
+  firstSeenAt    DateTime  @default(now())
+  lastSeenAt     DateTime  @default(now())
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([errorType])
+  @@index([severity])
+  @@index([resolved])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+enum ErrorSeverity {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+// UserPreferences model - user privacy and preference settings
+model UserPreferences {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Analytics preferences
+  analyticsEnabled    Boolean   @default(true)
+  trackingEnabled     Boolean   @default(true)
+  errorReportingEnabled Boolean @default(true)
+
+  // Privacy
+  anonymizeData       Boolean   @default(false)
+  shareUsageData      Boolean   @default(true)
+
+  // Notifications
+  emailNotifications  Boolean   @default(true)
+  pushNotifications   Boolean   @default(true)
+
+  // Other preferences
+  preferences         Json      @default("{}")
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+// ========================
+// FILE STORAGE
+// ========================
+
+// File model - stores user-uploaded files
+model File {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  sessionId   String?
+
+  // File details
+  filename    String
+  originalName String
+  mimeType    String
+  size        BigInt    // Size in bytes
+  
+  // File category/type
+  category    FileCategory @default(GENERAL)
+
+  // S3 storage details
+  s3Key       String    @unique
+  s3Bucket    String
+  s3Region    String?
+  
+  // URLs
+  url         String?   // Public or CDN URL
+  thumbnailUrl String?  // Thumbnail for images/videos
+  previewUrl  String?   // Preview URL for documents
+  
+  // Processing status
+  status      FileStatus @default(UPLOADING)
+  
+  // Multipart upload tracking
+  uploadId    String?   // S3 multipart upload ID
+  uploadProgress Float  @default(0) // 0-100
+  
+  // File metadata
+  metadata    Json      @default("{}")  // width, height, duration, etc.
+  
+  // Security
+  isPublic    Boolean   @default(false)
+  virusScanned Boolean  @default(false)
+  virusScanResult String?
+  
+  // Access tracking
+  downloadCount Int     @default(0)
+  lastAccessedAt DateTime?
+  
+  // Expiry (for temporary files)
+  expiresAt   DateTime?
+  
+  // Timestamps
+  uploadedAt  DateTime  @default(now())
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([projectId])
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([s3Key])
+  @@index([expiresAt])
+}
+
+enum FileStatus {
+  UPLOADING     // File is being uploaded
+  PROCESSING    // File is being processed (thumbnail, optimization, etc.)
+  READY         // File is ready to use
+  FAILED        // Upload or processing failed
+  DELETED       // File marked for deletion
+  ARCHIVED      // File is archived
+}
+
+enum FileCategory {
+  GENERAL       // General files
+  IMAGE         // Images (jpg, png, gif, etc.)
+  VIDEO         // Videos (mp4, webm, etc.)
+  AUDIO         // Audio files
+  DOCUMENT      // Documents (pdf, docx, etc.)
+  CODE          // Code files
+  ARCHIVE       // Zip, tar, etc.
+  RECORDING     // Screen recordings
+  ATTACHMENT    // Email attachments, etc.
+}
+
+// StorageQuota model - tracks user storage usage
+model StorageQuota {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Quota limits (in bytes)
+  quotaLimit  BigInt    // Total quota based on subscription tier
+  quotaUsed   BigInt    @default(0) // Currently used storage
+  
+  // File count limits
+  fileCountLimit Int?   // Max number of files (optional)
+  fileCount   Int       @default(0)
+  
+  // Bandwidth tracking (monthly)
+  bandwidthLimit BigInt? // Monthly bandwidth limit in bytes
+  bandwidthUsed BigInt  @default(0)
+  bandwidthResetAt DateTime?
+  
+  // Warnings
+  warningThreshold Float @default(0.8) // 80% - send warning
+  quotaWarningsSent Int  @default(0)
+  lastWarningAt DateTime?
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+// ========================
+// AUDIT & COMPLIANCE
+// ========================
+
+// AuditLog model - comprehensive audit logging for security and compliance
+model AuditLog {
+  id          String    @id @default(uuid())
+
+  // User identification
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Action details
+  action      String    // e.g., auth.login, user.created, project.deleted
+  resource    String    // Resource type: user, project, session, etc.
+  resourceId  String?   // ID of the affected resource
+
+  // Change tracking
+  details     Json?     // Additional details about the action
+  before      Json?     // State before the change (for updates/deletes)
+  after       Json?     // State after the change (for creates/updates)
+
+  // Request context
+  ipAddress   String?
+  userAgent   String?
+  requestId   String?   // For correlating multiple audit entries
+
+  // Security
+  status      AuditStatus @default(SUCCESS)
+  errorMessage String?   // If action failed
+
+  // Flags
+  isSuspicious Boolean  @default(false)
+  isAdminAction Boolean @default(false)
+
+  // Retention (based on subscription tier)
+  expiresAt   DateTime? // When this log should be deleted
+
+  // Timestamp
+  timestamp   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([resourceId])
+  @@index([timestamp])
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([isSuspicious])
+  @@index([isAdminAction])
+  @@index([expiresAt])
+}
+
+enum AuditStatus {
+  SUCCESS
+  FAILURE
+  PARTIAL
+}
+
+// ========================
+// USAGE TRACKING & RATE LIMITING
+// ========================
+
+// UsageRecord model - tracks individual API usage events
+model UsageRecord {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Usage type
+  type        UsageType
+  category    String    // e.g., "api_call", "voice_minute", "storage", "recording", "agent_connection"
+
+  // Metadata
+  endpoint    String?   // For API calls
+  method      String?   // HTTP method
+  statusCode  Int?      // Response status
+  ipAddress   String?
+  userAgent   String?
+
+  // Quantity tracking
+  quantity    Float     @default(1)  // 1 for API call, minutes for voice, bytes for storage
+
+  // Timestamps
+  timestamp   DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, timestamp])
+  @@index([userId, type])
+  @@index([timestamp])
+  @@index([type, category])
+}
+
+enum UsageType {
+  API_CALL
+  VOICE_MINUTE
+  STORAGE
+  RECORDING
+  AGENT_CONNECTION
+}
+
+// DailyUsage model - aggregated daily usage stats
+model DailyUsage {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Date
+  date        DateTime  @db.Date
+
+  // API usage
+  apiCalls    Int       @default(0)
+  apiQuota    Int       @default(0) // Daily quota for this tier
+
+  // Voice usage
+  voiceMinutes  Float   @default(0)
+  voiceQuota    Float   @default(0)
+
+  // Storage usage (in bytes)
+  storageUsed   BigInt  @default(0)
+  storageQuota  BigInt  @default(0)
+
+  // Recordings
+  recordingCount  Int   @default(0)
+  recordingQuota  Int   @default(0)
+
+  // Agent connections
+  agentConnections  Int @default(0)
+  agentQuota        Int @default(0)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([date])
+}
+
+// MonthlyUsage model - aggregated monthly usage stats
+model MonthlyUsage {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Month and year
+  year        Int
+  month       Int       // 1-12
+
+  // API usage
+  apiCalls    Int       @default(0)
+  apiQuota    Int       @default(0) // Monthly quota for this tier
+
+  // Voice usage
+  voiceMinutes  Float   @default(0)
+  voiceQuota    Float   @default(0)
+
+  // Storage usage (in bytes)
+  storageUsed   BigInt  @default(0)
+  storageQuota  BigInt  @default(0)
+
+  // Recordings
+  recordingCount  Int   @default(0)
+  recordingQuota  Int   @default(0)
+
+  // Agent connections
+  agentConnections  Int @default(0)
+  agentQuota        Int @default(0)
+
+  // Cost tracking (in cents)
+  estimatedCost Int   @default(0)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, year, month])
+  @@index([userId, year, month])
+  @@index([year, month])
+}
+
+// UsageAlert model - tracks usage alert notifications
+model UsageAlert {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Alert details
+  type        UsageType
+  threshold   Int       // Percentage (80, 100, etc.)
+  currentUsage  Float
+  limit       Float
+
+  // Notification
+  notified    Boolean   @default(false)
+  notifiedAt  DateTime?
+  emailSent   Boolean   @default(false)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, type])
+  @@index([notified])
+  @@index([createdAt])
+}
+
+// ========================
+// WEBHOOKS
+// ========================
+
+// Webhook model - user-defined webhooks for event notifications
+model Webhook {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Webhook details
+  name        String
+  url         String    // Endpoint URL to call
+  secret      String    // Secret for HMAC signature verification
+
+  // Events to subscribe to
+  events      String[]  // Array of event types (e.g., ["project.created", "session.started"])
+
+  // Status
+  active      Boolean   @default(true)
+  verified    Boolean   @default(false) // Whether the webhook URL has been verified
+
+  // Metadata
+  description String?
+  headers     Json      @default("{}") // Custom headers to include in webhook requests
+
+  // Rate limiting
+  maxRetries  Int       @default(3)
+  retryDelay  Int       @default(60) // Delay between retries in seconds
+
+  // Timestamps
+  lastTriggeredAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  deliveries  WebhookDelivery[]
+
+  @@index([userId])
+  @@index([active])
+  @@index([userId, active])
+}
+
+// WebhookDelivery model - tracks webhook delivery attempts
+model WebhookDelivery {
+  id          String    @id @default(uuid())
+  webhookId   String
+  webhook     Webhook   @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  // Event details
+  eventId     String    // Unique event ID
+  eventType   String    // Event type (e.g., "project.created")
+  payload     Json      // Event payload
+
+  // Delivery status
+  status      WebhookDeliveryStatus @default(PENDING)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3)
+
+  // Response details
+  responseCode    Int?
+  responseBody    String?   @db.Text
+  responseHeaders Json?
+  errorMessage    String?   @db.Text
+
+  // Timing
+  nextRetryAt     DateTime?
+  lastAttemptAt   DateTime?
+  deliveredAt     DateTime?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([webhookId])
+  @@index([status])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([webhookId, status])
+  @@index([status, nextRetryAt])
+}
+
+enum WebhookDeliveryStatus {
+  PENDING
+  SENDING
+  SUCCESS
+  FAILED
+  RETRYING
+}
+
+// ========================
+// TEAM COLLABORATION
+// ========================
+
+// Team model - represents a team/organization
+model Team {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  avatarUrl   String?
+
+  // Owner
+  ownerId     String
+  owner       User      @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Subscription plan
+  plan        SubscriptionTier @default(PRO)
+
+  // Billing (team-level subscription)
+  stripeCustomerId      String?   @unique
+  stripeSubscriptionId  String?   @unique
+  stripePriceId         String?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  members     TeamMember[]
+  projects    TeamProject[]
+  invitations TeamInvitation[]
+  activityLogs ActivityLog[]
+
+  @@index([ownerId])
+  @@index([slug])
+  @@index([createdAt])
+}
+
+// TeamMember model - team membership
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      TeamRole @default(MEMBER)
+
+  // Member details
+  joinedAt  DateTime @default(now())
+  invitedBy String?  // User ID who invited this member
+
+  // Relations
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+  @@index([role])
+}
+
+enum TeamRole {
+  OWNER      // Full access, billing, can delete team
+  ADMIN      // Manage members, all projects
+  MEMBER     // Create/edit own projects, view team projects
+  VIEWER     // Read-only access
+}
+
+// TeamInvitation model - pending team invitations
+model TeamInvitation {
+  id        String   @id @default(uuid())
+  teamId    String
+  email     String
+  role      TeamRole @default(MEMBER)
+  token     String   @unique
+  
+  // Invitation status
+  status    InvitationStatus @default(PENDING)
+  
+  // Expiry
+  expiresAt DateTime
+  acceptedAt DateTime?
+  revokedAt  DateTime?
+
+  // Invited by
+  invitedBy String?  // User ID who sent the invitation
+
+  // Relations
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teamId])
+  @@index([email])
+  @@index([token])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+// TeamProject model - projects owned by teams
+model TeamProject {
+  id          String    @id @default(uuid())
+  teamId      String
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // Link to existing project
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Permissions (who can access this project)
+  accessLevel TeamProjectAccess @default(ALL_MEMBERS)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([teamId, projectId])
+  @@index([teamId])
+  @@index([projectId])
+}
+
+enum TeamProjectAccess {
+  ALL_MEMBERS    // All team members can access
+  ADMINS_ONLY    // Only admins and owner
+  CUSTOM         // Custom access list (future feature)
+}
+
+// ActivityLog model - team activity feed
+model ActivityLog {
+  id          String    @id @default(uuid())
+  
+  // Team context
+  teamId      String?
+  team        Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // User who performed the action
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Action details
+  action      String    // member_added, project_created, role_changed, etc.
+  resource    String    // Resource type: project, member, invitation, etc.
+  resourceId  String?   // ID of the affected resource
+  
+  // Change details
+  metadata    Json      @default("{}")
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+
+  @@index([teamId, createdAt])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+
+// ========================
+// NOTIFICATIONS
+// ========================
+
+// NotificationPreferences model - manages user notification settings
+model NotificationPreferences {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+
+  // Email notifications
+  emailEnabled    Boolean @default(true)
+  emailDigest     DigestFrequency @default(DAILY)
+
+  // Push notifications
+  pushEnabled     Boolean @default(true)
+  pushSound       Boolean @default(true)
+
+  // In-app notifications
+  inAppEnabled    Boolean @default(true)
+
+  // Specific notification types
+  sessionStarted      Boolean @default(true)
+  sessionEnded        Boolean @default(true)
+  agentConnected      Boolean @default(true)
+  agentDisconnected   Boolean @default(true)
+  recordingReady      Boolean @default(true)
+  paymentReminders    Boolean @default(true)
+  productUpdates      Boolean @default(true)
+  weeklyReport        Boolean @default(true)
+  securityAlerts      Boolean @default(true)
+
+  // Quiet hours
+  quietHoursEnabled   Boolean @default(false)
+  quietHoursStart     String? // "22:00"
+  quietHoursEnd       String? // "08:00"
+  quietHoursTimezone  String @default("UTC")
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum DigestFrequency {
+  REALTIME
+  HOURLY
+  DAILY
+  WEEKLY
+  NEVER
+}
+
+// Notification model - stores in-app notifications
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+
+  // Notification details
+  type        NotificationType
+  title       String
+  message     String
+  data        Json?    // Additional context data
+
+  // Actions
+  actionUrl   String?  // URL to navigate to when clicked
+  actionText  String?  // Text for action button
+
+  // Status
+  read        Boolean  @default(false)
+  readAt      DateTime?
+
+  // Metadata
+  priority    NotificationPriority @default(NORMAL)
+  expiresAt   DateTime?  // Auto-delete after this time
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, read])
+  @@index([createdAt])
+  @@index([expiresAt])
+}
+
+enum NotificationType {
+  SESSION_STARTED
+  SESSION_ENDED
+  AGENT_CONNECTED
+  AGENT_DISCONNECTED
+  RECORDING_READY
+  PAYMENT_REMINDER
+  PAYMENT_FAILED
+  PRODUCT_UPDATE
+  WEEKLY_REPORT
+  SECURITY_ALERT
+  SUBSCRIPTION_CHANGED
+  SYSTEM_MAINTENANCE
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+// PushSubscription model - stores push notification subscriptions
+model PushSubscription {
+  id          String    @id @default(uuid())
+  userId      String
+
+  // Subscription details
+  endpoint    String    @unique
+  p256dh      String    // Public key
+  auth        String    // Auth secret
+
+  // Device/Platform info
+  deviceType  DeviceType @default(WEB)
+  userAgent   String?
+  platform    String?   // windows, macos, ios, android
+
+  // Status
+  isActive    Boolean   @default(true)
+  failureCount Int      @default(0) // Auto-disable after too many failures
+
+  // Timestamps
+  lastUsedAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([endpoint])
+  @@index([isActive])
+}
+
+enum DeviceType {
+  WEB
+  MOBILE_IOS
+  MOBILE_ANDROID
+  DESKTOP_WINDOWS
+  DESKTOP_MACOS
+  DESKTOP_LINUX
+}
+
+// ========================
+// BACKUP & EXPORT
+// ========================
+
+// Backup model - stores encrypted backups
+model Backup {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Backup details
+  type        BackupType
+  status      BackupStatus @default(CREATING)
+
+  // Options
+  encrypted   Boolean   @default(false)
+  includeRecordings Boolean @default(false)
+  projectId   String?   // For project-specific backups
+
+  // Data
+  data        String?   @db.Text  // Encrypted or plain JSON data
+  size        Int       @default(0) // Size in bytes
+  itemCount   Int       @default(0) // Number of items backed up
+
+  // Encryption
+  encryptionKey String? // Encrypted encryption key (user needs to store this)
+
+  // For incremental backups
+  since       DateTime? // Backup changes since this date
+
+  // Error tracking
+  error       String?
+
+  // Expiry
+  expiresAt   DateTime
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([type])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+enum BackupType {
+  FULL
+  PROJECT
+  INCREMENTAL
+}
+
+enum BackupStatus {
+  CREATING
+  COMPLETED
+  FAILED
+}
+
+// ExportJob model - tracks export jobs
+model ExportJob {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Export details
+  format      ExportFormat
+  type        ExportType
+  status      ExportStatus @default(PENDING)
+  progress    Int       @default(0) // 0-100
+
+  // Options
+  options     Json      @default("{}")
+
+  // Result data
+  data        String?   @db.Text  // Exported data
+  fileName    String?
+  contentType String?
+  size        Int?      // Size in bytes
+
+  // Download tracking
+  downloadedAt DateTime?
+
+  // Error tracking
+  error       String?
+
+  // Expiry
+  expiresAt   DateTime
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([type])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+enum ExportFormat {
+  JSON
+  CSV
+  ZIP
+}
+
+enum ExportType {
+  FULL
+  PROJECT
+  RECORDINGS
+  SESSIONS
+  GDPR
+}
+
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ImportJob model - tracks import jobs
+model ImportJob {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Import details
+  status      ImportStatus @default(PENDING)
+  progress    Int       @default(0) // 0-100
+
+  // Data tracking
+  data        String?   @db.Text  // Import data
+  totalItems  Int       @default(0)
+  importedItems Int     @default(0)
+  skippedItems  Int     @default(0)
+
+  // Error tracking
+  errors      String[]  @default([])
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+enum ImportStatus {
+  PENDING
+  VALIDATING
+  IMPORTING
+  COMPLETED
+  FAILED
+}

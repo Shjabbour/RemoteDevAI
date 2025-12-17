@@ -1,0 +1,163 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Production builds
+dist/
+build/
+out/
+.next/
+.turbo/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.iml
+.project
+.classpath
+.settings/
+.factorypath
+
+# React Native / Expo
+.expo/
+.expo-shared/
+apps/mobile/.expo/
+apps/mobile/.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Metro
+.metro-health-check*
+
+# Android
+apps/mobile/android/app/build/
+apps/mobile/android/.gradle/
+apps/mobile/android/local.properties
+apps/mobile/android/.idea/
+apps/mobile/android/*.iml
+*.hprof
+
+# iOS
+apps/mobile/ios/Pods/
+apps/mobile/ios/**/*.xcworkspace
+!apps/mobile/ios/**/*.xcworkspace/contents.xcworkspacedata
+apps/mobile/ios/**/*.xcuserstate
+apps/mobile/ios/build/
+apps/mobile/ios/.xcode.env.local
+
+# Electron
+apps/desktop/dist/
+apps/desktop/out/
+apps/desktop/.webpack/
+apps/desktop/release/
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+apps/web/.swc/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# API Keys and Secrets
+service-account.json
+*.pem
+*.crt
+secrets/
+credentials/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+.parcel-cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Debugging
+.vscode/launch.json
+
+# Monorepo
+.turbo/
+.cache/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# K8s
+infra/secrets/
+
+# Generated files
+*.generated.*
+schema.generated.ts
+api.generated.ts
+
+# Audio files (if storing recordings)
+*.wav
+*.mp3
+*.m4a
+recordings/
+
+# Backup files
+*.bak
+*.backup
+
+# Package manager lockfiles (keep npm lock, ignore others)
+yarn.lock
+pnpm-lock.yaml
+
+# Keep npm lockfile
+!package-lock.json

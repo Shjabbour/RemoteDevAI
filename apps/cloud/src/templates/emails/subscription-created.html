@@ -1,0 +1,47 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Welcome to RemoteDevAI {{uppercase tier}}! 🎉</h1>
+
+    <p>Thank you for upgrading to RemoteDevAI {{tier}}! Your subscription is now active.</p>
+
+    <div class="card">
+      <h3 class="card-title">Your {{tier}} Plan Includes:</h3>
+      {{#eq tier "PRO"}}
+      <ul style="margin: 12px 0 0 20px;">
+        <li>Unlimited AI coding sessions</li>
+        <li>Advanced AI models (GPT-4, Claude Opus)</li>
+        <li>50GB cloud storage</li>
+        <li>Session recording and playback</li>
+        <li>Priority support</li>
+        <li>Custom workflows and templates</li>
+      </ul>
+      {{/eq}}
+      {{#eq tier "ENTERPRISE"}}
+      <ul style="margin: 12px 0 0 20px;">
+        <li>Everything in Pro</li>
+        <li>Unlimited cloud storage</li>
+        <li>Team collaboration features</li>
+        <li>SSO and advanced security</li>
+        <li>Dedicated support</li>
+        <li>Custom AI model training</li>
+        <li>On-premise deployment option</li>
+      </ul>
+      {{/eq}}
+    </div>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/dashboard" class="button">Go to Dashboard</a>
+    </div>
+
+    <p>Your subscription will renew automatically. You can manage your subscription anytime from your <a href="{{appUrl}}/dashboard/billing">billing settings</a>.</p>
+
+    <p>Need help getting started? Check out our <a href="{{appUrl}}/docs">documentation</a> or contact our support team.</p>
+
+    <p>Thank you for your business!<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

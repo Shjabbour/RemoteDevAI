@@ -1,0 +1,54 @@
+# Dockerfile for Desktop Agent (Testing Only)
+FROM node:20-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat python3 make g++
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+COPY packages/desktop/package.json ./packages/desktop/
+COPY packages/shared/package.json ./packages/shared/
+
+# Install dependencies
+RUN npm ci --legacy-peer-deps
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/desktop/node_modules ./packages/desktop/node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build -w @remotedevai/desktop
+
+# Production image
+FROM base AS runner
+WORKDIR /app
+
+# Set production environment
+ENV NODE_ENV=production
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nodejs
+
+# Copy necessary files
+COPY --from=builder --chown=nodejs:nodejs /app/packages/desktop/dist ./packages/desktop/dist
+COPY --from=builder --chown=nodejs:nodejs /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder --chown=nodejs:nodejs /app/packages/desktop/node_modules ./packages/desktop/node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
+
+# Switch to non-root user
+USER nodejs
+
+# Start the application
+CMD ["node", "packages/desktop/dist/index.js"]

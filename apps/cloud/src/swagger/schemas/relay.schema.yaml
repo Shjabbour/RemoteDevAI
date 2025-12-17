@@ -1,0 +1,179 @@
+components:
+  schemas:
+    DesktopAgent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique agent identifier
+          example: "550e8400-e29b-41d4-a716-446655440005"
+        userId:
+          type: string
+          format: uuid
+          description: Owner's user ID
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        name:
+          type: string
+          description: Agent name
+          example: "MacBook Pro"
+        version:
+          type: string
+          description: Agent software version
+          example: "1.2.3"
+          nullable: true
+        platform:
+          type: string
+          description: Operating system platform
+          example: "darwin"
+          enum: [windows, darwin, linux]
+          nullable: true
+        status:
+          type: string
+          enum: [ONLINE, OFFLINE, BUSY]
+          description: Agent connection status
+          example: "ONLINE"
+        socketId:
+          type: string
+          description: Current Socket.IO connection ID
+          example: "socket_abc123"
+          nullable: true
+        ipAddress:
+          type: string
+          description: Agent IP address
+          example: "192.168.1.100"
+          nullable: true
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: Last activity timestamp
+          example: "2025-01-15T12:00:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-10T09:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T12:00:00Z"
+      required:
+        - id
+        - userId
+        - name
+        - status
+        - lastSeenAt
+        - createdAt
+        - updatedAt
+
+    RelayMessageRequest:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          description: Message type
+          example: "command"
+          enum: [command, file_request, file_send, notification, custom]
+        payload:
+          type: object
+          description: Message payload (structure depends on type)
+          additionalProperties: true
+          example:
+            action: "execute"
+            command: "npm install"
+
+    ExecuteCommandRequest:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          description: Command to execute
+          example: "npm test"
+        args:
+          type: array
+          description: Command arguments
+          items:
+            type: string
+          example: ["--coverage", "--verbose"]
+
+    FileRequestRequest:
+      type: object
+      required:
+        - filePath
+      properties:
+        filePath:
+          type: string
+          description: Path to the requested file
+          example: "/home/user/project/config.json"
+
+    FileSendRequest:
+      type: object
+      required:
+        - filePath
+        - content
+      properties:
+        filePath:
+          type: string
+          description: Destination file path
+          example: "/home/user/project/config.json"
+        content:
+          type: string
+          description: File content (base64 encoded for binary files)
+          example: "{ \"key\": \"value\" }"
+
+    StartRecordingRequest:
+      type: object
+      required:
+        - sessionId
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: ID of the session to record
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        options:
+          type: object
+          description: Recording options
+          properties:
+            audio:
+              type: boolean
+              example: true
+            cursor:
+              type: boolean
+              example: true
+            quality:
+              type: string
+              enum: [low, medium, high]
+              example: "high"
+
+    StopRecordingRequest:
+      type: object
+      required:
+        - sessionId
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: ID of the session being recorded
+          example: "550e8400-e29b-41d4-a716-446655440002"
+
+    PingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            isAlive:
+              type: boolean
+              description: Whether the agent is responding
+              example: true
+        message:
+          type: string
+          example: "Agent is alive"

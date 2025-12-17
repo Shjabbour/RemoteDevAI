@@ -1,0 +1,116 @@
+name: CLI CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/cli/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'packages/cli/**'
+  release:
+    types: [published]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [18.x, 20.x, 21.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: packages/cli/package.json
+
+      - name: Install dependencies
+        working-directory: packages/cli
+        run: npm ci
+
+      - name: Lint code
+        working-directory: packages/cli
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build project
+        working-directory: packages/cli
+        run: npm run build
+
+      - name: Check TypeScript compilation
+        working-directory: packages/cli
+        run: npx tsc --noEmit
+
+      - name: Test CLI commands
+        working-directory: packages/cli
+        run: |
+          node dist/index.js --version
+          node dist/index.js --help
+
+      - name: Upload build artifacts
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-dist
+          path: packages/cli/dist/
+
+  publish:
+    name: Publish to npm
+    needs: build-and-test
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        working-directory: packages/cli
+        run: npm ci
+
+      - name: Build project
+        working-directory: packages/cli
+        run: npm run build
+
+      - name: Publish to npm
+        working-directory: packages/cli
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release Notes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const changelog = fs.readFileSync('packages/cli/CHANGELOG.md', 'utf8');
+            const version = require('./packages/cli/package.json').version;
+
+            // Extract latest version changes
+            const versionSection = changelog.match(new RegExp(`## \\[${version}\\][\\s\\S]*?(?=## \\[|$)`))?.[0];
+
+            if (versionSection) {
+              github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: `cli-v${version}`,
+                name: `CLI v${version}`,
+                body: versionSection,
+                draft: false,
+                prerelease: false
+              });
+            }

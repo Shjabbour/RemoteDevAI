@@ -1,0 +1,36 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Payment Received ✓</h1>
+
+    <p>Thank you! We've successfully processed your payment for RemoteDevAI.</p>
+
+    <div class="card">
+      <h3 class="card-title">Payment Details</h3>
+      <table style="width: 100%; margin-top: 12px;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280;">Amount Paid:</td>
+          <td style="padding: 8px 0; text-align: right; font-weight: 600;">${{amount}}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; border-top: 1px solid #e5e7eb;">Payment Date:</td>
+          <td style="padding: 8px 0; text-align: right; border-top: 1px solid #e5e7eb;">{{date}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/dashboard/billing" class="button">View Invoice</a>
+    </div>
+
+    <p style="font-size: 14px; color: #6b7280;">
+      A receipt has been sent to your email. You can also view and download your invoices anytime from your <a href="{{appUrl}}/dashboard/billing">billing page</a>.
+    </p>
+
+    <p>Thank you for your continued support!<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

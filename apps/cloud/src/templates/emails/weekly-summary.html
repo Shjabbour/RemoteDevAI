@@ -1,0 +1,68 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Your Weekly RemoteDevAI Summary</h1>
+
+    <p>Here's what you accomplished this week with RemoteDevAI:</p>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-value">{{sessions}}</span>
+        <span class="stat-label">Sessions</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{projects}}</span>
+        <span class="stat-label">Projects</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{totalTime}}</span>
+        <span class="stat-label">Hours Coded</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">📊 Your Activity</h3>
+      <table style="width: 100%; margin-top: 12px;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280;">Coding Sessions:</td>
+          <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{sessions}}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; border-top: 1px solid #e5e7eb;">Active Projects:</td>
+          <td style="padding: 8px 0; text-align: right; font-weight: 600; border-top: 1px solid #e5e7eb;">{{projects}}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; border-top: 1px solid #e5e7eb;">Total Time:</td>
+          <td style="padding: 8px 0; text-align: right; font-weight: 600; border-top: 1px solid #e5e7eb;">{{totalTime}} hours</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; border-top: 1px solid #e5e7eb;">Recordings:</td>
+          <td style="padding: 8px 0; text-align: right; font-weight: 600; border-top: 1px solid #e5e7eb;">{{recordings}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/dashboard" class="button">View Dashboard</a>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">💡 Tip of the Week</h3>
+      <p style="margin: 12px 0 0 0;">
+        Did you know you can customize your AI assistant's behavior? Try adjusting the AI settings in your dashboard to match your coding style!
+      </p>
+    </div>
+
+    <p>Keep up the great work! We're excited to see what you build next week.</p>
+
+    <p style="font-size: 14px; color: #6b7280; margin-top: 24px;">
+      Don't want to receive weekly summaries? You can <a href="{{appUrl}}/dashboard/settings">manage your email preferences</a> anytime.
+    </p>
+
+    <p>Happy coding!<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

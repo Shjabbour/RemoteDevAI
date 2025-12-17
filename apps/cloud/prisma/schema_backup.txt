@@ -1,0 +1,262 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - manages user accounts
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?   // Optional, if using Clerk this might be null
+  clerkId       String?   @unique // Clerk user ID
+  avatarUrl     String?
+
+  // Subscription
+  subscriptionTier  SubscriptionTier @default(FREE)
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastSeenAt    DateTime  @default(now())
+
+  // Relations
+  projects      Project[]
+  sessions      Session[]
+  subscription  Subscription?
+  desktopAgents DesktopAgent[]
+  apiKeys       ApiKey[]
+
+  @@index([email])
+  @@index([clerkId])
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+// Subscription model - manages payment subscriptions
+model Subscription {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Stripe
+  stripeCustomerId      String?   @unique
+  stripeSubscriptionId  String?   @unique
+  stripePriceId         String?
+
+  // Subscription details
+  tier            SubscriptionTier @default(FREE)
+  status          SubscriptionStatus @default(ACTIVE)
+
+  // Billing
+  currentPeriodStart  DateTime?
+  currentPeriodEnd    DateTime?
+  cancelAtPeriodEnd   Boolean   @default(false)
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  TRIALING
+}
+
+// Project model - represents a coding project
+model Project {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+
+  // Settings
+  settings    Json      @default("{}")
+
+  // Status
+  isActive    Boolean   @default(true)
+  isArchived  Boolean   @default(false)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  sessions    Session[]
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
+// Session model - represents a coding session with AI
+model Session {
+  id          String    @id @default(uuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Session details
+  title       String?
+  summary     String?
+
+  // Messages/Conversation
+  messages    Json      @default("[]") // Array of message objects
+
+  // Session status
+  status      SessionStatus @default(ACTIVE)
+
+  // Timestamps
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  recordings  Recording[]
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SessionStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+// Recording model - stores video/screen recordings
+model Recording {
+  id          String    @id @default(uuid())
+  sessionId   String
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Recording details
+  title       String?
+  url         String    // S3/R2 URL
+  thumbnailUrl String?
+
+  // Metadata
+  duration    Int?      // Duration in seconds
+  fileSize    Int?      // Size in bytes
+  mimeType    String    @default("video/webm")
+
+  // Processing status
+  status      RecordingStatus @default(UPLOADING)
+
+  // Timestamps
+  recordedAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sessionId])
+  @@index([status])
+}
+
+enum RecordingStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+}
+
+// DesktopAgent model - tracks connected desktop agents
+model DesktopAgent {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Agent details
+  name        String    @default("Desktop Agent")
+  version     String?
+  platform    String?   // windows, macos, linux
+
+  // Connection
+  status      AgentStatus @default(OFFLINE)
+  socketId    String?   // Current Socket.IO connection ID
+  ipAddress   String?
+
+  // Timestamps
+  lastSeenAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum AgentStatus {
+  ONLINE
+  OFFLINE
+  BUSY
+}
+
+// ApiKey model - for API authentication
+model ApiKey {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  key         String    @unique // Hashed API key
+
+  // Permissions
+  permissions Json      @default("[]") // Array of permission strings
+
+  // Status
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+
+  // Expiry
+  expiresAt   DateTime?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([key])
+}
+
+// WebhookEvent model - stores webhook events for debugging
+model WebhookEvent {
+  id          String    @id @default(uuid())
+
+  source      String    // stripe, clerk, etc.
+  eventType   String
+  payload     Json
+
+  processed   Boolean   @default(false)
+  processedAt DateTime?
+  error       String?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([source, eventType])
+  @@index([processed])
+  @@index([createdAt])
+}

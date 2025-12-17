@@ -1,0 +1,409 @@
+{
+  "common": {
+    "buttons": {
+      "getStarted": "始める",
+      "getStartedFree": "無料で始める",
+      "learnMore": "詳しく見る",
+      "watchDemo": "デモを見る",
+      "signIn": "ログイン",
+      "signUp": "新規登録",
+      "signOut": "ログアウト",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "create": "作成",
+      "close": "閉じる",
+      "back": "戻る",
+      "next": "次へ",
+      "submit": "送信",
+      "continue": "続ける",
+      "contactUs": "お問い合わせ",
+      "documentation": "ドキュメント"
+    },
+    "labels": {
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "name": "名前",
+      "phone": "電話番号",
+      "company": "会社",
+      "message": "メッセージ",
+      "language": "言語",
+      "theme": "テーマ",
+      "loading": "読み込み中...",
+      "search": "検索",
+      "filter": "フィルター",
+      "sort": "並び替え",
+      "actions": "操作"
+    },
+    "navigation": {
+      "home": "ホーム",
+      "features": "機能",
+      "pricing": "料金",
+      "docs": "ドキュメント",
+      "blog": "ブログ",
+      "dashboard": "ダッシュボード",
+      "projects": "プロジェクト",
+      "settings": "設定",
+      "billing": "請求",
+      "recordings": "録音"
+    },
+    "status": {
+      "online": "オンライン",
+      "offline": "オフライン",
+      "connected": "接続済み",
+      "disconnected": "切断済み",
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "pending": "保留中",
+      "completed": "完了",
+      "failed": "失敗",
+      "inProgress": "進行中"
+    },
+    "time": {
+      "now": "今",
+      "today": "今日",
+      "yesterday": "昨日",
+      "tomorrow": "明日",
+      "lastWeek": "先週",
+      "lastMonth": "先月",
+      "minute": "分",
+      "minutes": "分",
+      "hour": "時間",
+      "hours": "時間",
+      "day": "日",
+      "days": "日",
+      "week": "週",
+      "weeks": "週",
+      "month": "月",
+      "months": "月",
+      "year": "年",
+      "years": "年",
+      "ago": "前"
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "どこでもあなたのAI開発者",
+      "title": "どこからでも",
+      "titleAccent": "コーディング",
+      "subtitle": "AI駆動の音声とビデオアシスタンスでリモートプロジェクトに取り組みます。デスクトップエージェントがハンズフリーでコーディングしながら画面をストリーミングします。",
+      "features": {
+        "trial": "14日間無料トライアル",
+        "noCard": "クレジットカード不要",
+        "cancel": "いつでもキャンセル可能"
+      },
+      "listening": "聞いています...",
+      "aiPowered": "AI駆動",
+      "realtime": "リアルタイムアシスタンス",
+      "activeProjects": "アクティブプロジェクト",
+      "more": "+{count}件"
+    },
+    "features": {
+      "title": "必要なすべて",
+      "subtitle": "現代的な開発のための強力な機能",
+      "list": {
+        "voice": {
+          "title": "音声制御",
+          "description": "高度な音声認識でハンズフリーで開発環境を制御"
+        },
+        "video": {
+          "title": "画面共有",
+          "description": "低遅延ストリーミングでどこからでもデスクトップをリアルタイムで表示"
+        },
+        "ai": {
+          "title": "AIアシスタンス",
+          "description": "ClaudeとGPT-4によるインテリジェントなコード提案と説明を取得"
+        },
+        "collaboration": {
+          "title": "チーム協力",
+          "description": "共有セッションでチームとリアルタイムで協力"
+        },
+        "secure": {
+          "title": "エンタープライズセキュリティ",
+          "description": "すべてのコードと通信に対する銀行レベルの暗号化とセキュリティ"
+        },
+        "integrations": {
+          "title": "IDE統合",
+          "description": "VS Code、IntelliJ、その他の人気IDEとシームレスに連携"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "使い方",
+      "subtitle": "数分で開始",
+      "steps": {
+        "install": {
+          "title": "デスクトップエージェントをインストール",
+          "description": "開発マシンに軽量デスクトップエージェントをダウンロードしてインストール"
+        },
+        "download": {
+          "title": "モバイルアプリをダウンロード",
+          "description": "iOSまたはAndroidデバイスでRemoteDevAIアプリを取得"
+        },
+        "connect": {
+          "title": "接続してコーディング",
+          "description": "デバイスをリンクして、AIアシスタンスでどこからでもコーディングを開始"
+        }
+      }
+    },
+    "pricing": {
+      "title": "シンプルで透明な料金",
+      "subtitle": "あなたに合ったプランを選択",
+      "monthly": "月額",
+      "yearly": "年額",
+      "savePercent": "{percent}%お得",
+      "plans": {
+        "free": {
+          "name": "無料",
+          "price": "¥0",
+          "description": "RemoteDevAIを試すのに最適",
+          "features": {
+            "sessions": "月5セッション",
+            "duration": "セッションあたり30分",
+            "storage": "1GBストレージ",
+            "support": "コミュニティサポート"
+          }
+        },
+        "pro": {
+          "name": "プロ",
+          "price": "¥2,900",
+          "description": "個人開発者向け",
+          "features": {
+            "sessions": "無制限セッション",
+            "duration": "無制限時間",
+            "storage": "50GBストレージ",
+            "ai": "高度なAIモデル",
+            "support": "優先サポート",
+            "recordings": "セッション録音"
+          },
+          "popular": "最も人気"
+        },
+        "team": {
+          "name": "チーム",
+          "price": "¥9,900",
+          "description": "開発チーム向け",
+          "features": {
+            "everything": "プロのすべて",
+            "users": "最大10ユーザー",
+            "storage": "500GBストレージ",
+            "collaboration": "チーム協力",
+            "analytics": "高度な分析",
+            "sso": "SSOサポート"
+          }
+        },
+        "enterprise": {
+          "name": "エンタープライズ",
+          "price": "カスタム",
+          "description": "大規模組織向け",
+          "features": {
+            "everything": "チームのすべて",
+            "unlimited": "無制限ユーザー",
+            "storage": "無制限ストレージ",
+            "dedicated": "専用サポート",
+            "sla": "SLA保証",
+            "onpremise": "オンプレミスオプション"
+          }
+        }
+      }
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "知っておくべきすべて",
+      "items": {
+        "what": {
+          "question": "RemoteDevAIとは何ですか？",
+          "answer": "RemoteDevAIは、音声とビデオを使用してどこからでも開発環境を制御できるプラットフォームで、ClaudeとGPT-4によるAIアシスタンスを提供します。"
+        },
+        "platforms": {
+          "question": "どのプラットフォームがサポートされていますか？",
+          "answer": "デスクトップエージェントはWindows、macOS、Linuxで動作します。モバイルアプリはiOSとAndroidで利用できます。"
+        },
+        "security": {
+          "question": "コードは安全ですか？",
+          "answer": "はい。すべての通信はエンドツーエンドで暗号化されており、サーバーにコードを保存することはありません。データはデバイスに残ります。"
+        },
+        "ai": {
+          "question": "どのAIモデルを使用できますか？",
+          "answer": "Claude（Opus、Sonnet）、GPT-4、GPT-3.5、その他の主要AIモデルをサポートしています。プロユーザーはすべてのモデルにアクセスできます。"
+        },
+        "offline": {
+          "question": "オフラインで使用できますか？",
+          "answer": "デスクトップエージェントはローカル開発用にオフラインで動作できますが、AI機能とリモートアクセスにはインターネット接続が必要です。"
+        },
+        "cancel": {
+          "question": "いつでもキャンセルできますか？",
+          "answer": "はい、いつでもサブスクリプションをキャンセルできます。請求期間の終了までアクセスを保持します。"
+        }
+      }
+    },
+    "cta": {
+      "title": "ワークフローを変革する準備はできていますか？",
+      "subtitle": "どこからでもコーディングする数千人の開発者に参加",
+      "getStarted": "無料で始める",
+      "noCard": "クレジットカード不要"
+    }
+  },
+  "dashboard": {
+    "welcome": "おかえりなさい、{name}",
+    "overview": "概要",
+    "recentProjects": "最近のプロジェクト",
+    "recentSessions": "最近のセッション",
+    "stats": {
+      "totalProjects": "総プロジェクト数",
+      "totalSessions": "総セッション数",
+      "hoursUsed": "使用時間",
+      "storageUsed": "使用ストレージ"
+    },
+    "projects": {
+      "title": "プロジェクト",
+      "create": "プロジェクトを作成",
+      "empty": "まだプロジェクトがありません",
+      "emptyDescription": "最初のプロジェクトを作成して開始",
+      "name": "プロジェクト名",
+      "description": "説明",
+      "status": "ステータス",
+      "created": "作成日",
+      "updated": "更新日",
+      "delete": "プロジェクトを削除",
+      "deleteConfirm": "このプロジェクトを削除してもよろしいですか？"
+    },
+    "sessions": {
+      "title": "セッション",
+      "start": "セッションを開始",
+      "end": "セッションを終了",
+      "duration": "期間",
+      "status": "ステータス",
+      "recording": "録音",
+      "transcript": "トランスクリプト",
+      "empty": "まだセッションがありません",
+      "emptyDescription": "セッションを開始してコーディングを始める"
+    },
+    "recordings": {
+      "title": "録音",
+      "download": "ダウンロード",
+      "delete": "削除",
+      "empty": "まだ録音がありません",
+      "emptyDescription": "セッション録音がここに表示されます"
+    },
+    "settings": {
+      "title": "設定",
+      "profile": "プロフィール",
+      "account": "アカウント",
+      "preferences": "環境設定",
+      "notifications": "通知",
+      "security": "セキュリティ",
+      "apiKeys": "APIキー",
+      "billing": "請求",
+      "language": "言語",
+      "theme": "テーマ",
+      "save": "変更を保存",
+      "saved": "設定が正常に保存されました"
+    },
+    "billing": {
+      "title": "請求",
+      "currentPlan": "現在のプラン",
+      "upgrade": "プランをアップグレード",
+      "downgrade": "プランをダウングレード",
+      "cancel": "サブスクリプションをキャンセル",
+      "invoices": "請求書",
+      "paymentMethod": "支払い方法",
+      "updateCard": "カードを更新",
+      "nextBilling": "次回請求日"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "アカウントにログイン",
+      "subtitle": "おかえりなさい！詳細を入力してください",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "remember": "ログイン状態を保持",
+      "forgot": "パスワードをお忘れですか？",
+      "submit": "ログイン",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "signUp": "新規登録"
+    },
+    "signUp": {
+      "title": "アカウントを作成",
+      "subtitle": "今日から無料トライアルを開始",
+      "name": "フルネーム",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "confirm": "パスワードを確認",
+      "agree": "同意します",
+      "terms": "利用規約",
+      "and": "と",
+      "privacy": "プライバシーポリシー",
+      "submit": "新規登録",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "signIn": "ログイン"
+    },
+    "forgotPassword": {
+      "title": "パスワードをお忘れですか？",
+      "subtitle": "心配しないでください、リセット手順をお送りします",
+      "email": "メールアドレス",
+      "submit": "リセットリンクを送信",
+      "back": "ログインに戻る",
+      "sent": "リセットリンクを送信しました！メールを確認してください"
+    },
+    "resetPassword": {
+      "title": "パスワードをリセット",
+      "subtitle": "新しいパスワードを入力",
+      "password": "新しいパスワード",
+      "confirm": "新しいパスワードを確認",
+      "submit": "パスワードをリセット",
+      "success": "パスワードが正常にリセットされました"
+    }
+  },
+  "errors": {
+    "validation": {
+      "required": "{field}は必須です",
+      "email": "有効なメールアドレスを入力してください",
+      "password": "パスワードは8文字以上である必要があります",
+      "passwordMatch": "パスワードが一致しません",
+      "minLength": "{field}は{min}文字以上である必要があります",
+      "maxLength": "{field}は{max}文字以下である必要があります"
+    },
+    "api": {
+      "serverError": "サーバーエラー。後でもう一度お試しください",
+      "networkError": "ネットワークエラー。接続を確認してください",
+      "unauthorized": "この操作を実行する権限がありません",
+      "notFound": "要求されたリソースが見つかりませんでした",
+      "timeout": "リクエストタイムアウト。もう一度お試しください",
+      "unknown": "不明なエラーが発生しました"
+    },
+    "network": {
+      "offline": "オフラインです",
+      "slow": "ネットワーク接続が遅い",
+      "disconnected": "接続が失われました",
+      "reconnecting": "再接続中..."
+    }
+  },
+  "notifications": {
+    "sessionStarted": {
+      "title": "セッション開始",
+      "message": "コーディングセッションが開始されました"
+    },
+    "sessionEnded": {
+      "title": "セッション終了",
+      "message": "{duration}後にセッションが終了しました"
+    },
+    "projectCreated": {
+      "title": "プロジェクト作成",
+      "message": "{name}が正常に作成されました"
+    },
+    "projectDeleted": {
+      "title": "プロジェクト削除",
+      "message": "{name}が削除されました"
+    },
+    "settingsSaved": {
+      "title": "設定保存",
+      "message": "設定が更新されました"
+    },
+    "error": {
+      "title": "エラー",
+      "message": "問題が発生しました"
+    }
+  }
+}

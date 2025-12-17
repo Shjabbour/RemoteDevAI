@@ -1,0 +1,31 @@
+[auth]
+# Get your auth token from https://sentry.io/settings/account/api/auth-tokens/
+# token=YOUR_AUTH_TOKEN_HERE
+
+[defaults]
+# Your Sentry organization slug
+org=your-org-name
+
+# Default project for the Sentry CLI
+project=remotedevai-cloud
+
+# Default URL (usually you don't need to change this)
+url=https://sentry.io/
+
+[log]
+# Set log level (error, warn, info, debug)
+level=info
+
+[http]
+# HTTP timeout in seconds
+timeout=30
+
+# Retry configuration
+max_retries=5
+
+# Note: Do NOT commit this file with actual tokens!
+# Add your real configuration to .sentryclirc.local or use environment variables
+# The Sentry CLI will look for:
+#   1. .sentryclirc.local (ignored by git)
+#   2. .sentryclirc (this file - should only contain placeholders)
+#   3. Environment variables (SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT)

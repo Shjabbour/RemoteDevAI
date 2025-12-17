@@ -1,0 +1,409 @@
+{
+  "common": {
+    "buttons": {
+      "getStarted": "开始使用",
+      "getStartedFree": "免费开始",
+      "learnMore": "了解更多",
+      "watchDemo": "观看演示",
+      "signIn": "登录",
+      "signUp": "注册",
+      "signOut": "退出登录",
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "edit": "编辑",
+      "create": "创建",
+      "close": "关闭",
+      "back": "返回",
+      "next": "下一步",
+      "submit": "提交",
+      "continue": "继续",
+      "contactUs": "联系我们",
+      "documentation": "文档"
+    },
+    "labels": {
+      "email": "电子邮件",
+      "password": "密码",
+      "name": "姓名",
+      "phone": "电话",
+      "company": "公司",
+      "message": "消息",
+      "language": "语言",
+      "theme": "主题",
+      "loading": "加载中...",
+      "search": "搜索",
+      "filter": "筛选",
+      "sort": "排序",
+      "actions": "操作"
+    },
+    "navigation": {
+      "home": "首页",
+      "features": "功能",
+      "pricing": "价格",
+      "docs": "文档",
+      "blog": "博客",
+      "dashboard": "控制面板",
+      "projects": "项目",
+      "settings": "设置",
+      "billing": "账单",
+      "recordings": "录音"
+    },
+    "status": {
+      "online": "在线",
+      "offline": "离线",
+      "connected": "已连接",
+      "disconnected": "已断开",
+      "active": "活动",
+      "inactive": "不活动",
+      "pending": "待处理",
+      "completed": "已完成",
+      "failed": "失败",
+      "inProgress": "进行中"
+    },
+    "time": {
+      "now": "现在",
+      "today": "今天",
+      "yesterday": "昨天",
+      "tomorrow": "明天",
+      "lastWeek": "上周",
+      "lastMonth": "上个月",
+      "minute": "分钟",
+      "minutes": "分钟",
+      "hour": "小时",
+      "hours": "小时",
+      "day": "天",
+      "days": "天",
+      "week": "周",
+      "weeks": "周",
+      "month": "月",
+      "months": "月",
+      "year": "年",
+      "years": "年",
+      "ago": "前"
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "您的AI开发者，无处不在",
+      "title": "随时随地",
+      "titleAccent": "编程",
+      "subtitle": "通过AI驱动的语音和视频辅助远程处理您的项目。您的桌面代理程序在您免提编程时流式传输您的屏幕。",
+      "features": {
+        "trial": "14天免费试用",
+        "noCard": "无需信用卡",
+        "cancel": "随时取消"
+      },
+      "listening": "正在聆听...",
+      "aiPowered": "AI驱动",
+      "realtime": "实时辅助",
+      "activeProjects": "活动项目",
+      "more": "+{count}更多"
+    },
+    "features": {
+      "title": "您所需的一切",
+      "subtitle": "现代开发的强大功能",
+      "list": {
+        "voice": {
+          "title": "语音控制",
+          "description": "通过先进的语音识别免提控制您的开发环境"
+        },
+        "video": {
+          "title": "屏幕共享",
+          "description": "通过低延迟流式传输从任何地方实时查看您的桌面"
+        },
+        "ai": {
+          "title": "AI辅助",
+          "description": "获得由Claude和GPT-4提供支持的智能代码建议和解释"
+        },
+        "collaboration": {
+          "title": "团队协作",
+          "description": "通过共享会话与您的团队实时协作"
+        },
+        "secure": {
+          "title": "企业级安全",
+          "description": "银行级加密和安全保护您的所有代码和通信"
+        },
+        "integrations": {
+          "title": "IDE集成",
+          "description": "与VS Code、IntelliJ和其他流行IDE无缝集成"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "如何使用",
+      "subtitle": "几分钟内开始",
+      "steps": {
+        "install": {
+          "title": "安装桌面代理",
+          "description": "在您的开发机器上下载并安装我们的轻量级桌面代理"
+        },
+        "download": {
+          "title": "下载移动应用",
+          "description": "在您的iOS或Android设备上获取RemoteDevAI应用"
+        },
+        "connect": {
+          "title": "连接并编程",
+          "description": "链接您的设备并在AI辅助下从任何地方开始编程"
+        }
+      }
+    },
+    "pricing": {
+      "title": "简单透明的价格",
+      "subtitle": "选择适合您的计划",
+      "monthly": "每月",
+      "yearly": "每年",
+      "savePercent": "节省{percent}%",
+      "plans": {
+        "free": {
+          "name": "免费",
+          "price": "¥0",
+          "description": "非常适合试用RemoteDevAI",
+          "features": {
+            "sessions": "每月5次会话",
+            "duration": "每次会话30分钟",
+            "storage": "1GB存储空间",
+            "support": "社区支持"
+          }
+        },
+        "pro": {
+          "name": "专业版",
+          "price": "¥199",
+          "description": "适合个人开发者",
+          "features": {
+            "sessions": "无限会话",
+            "duration": "无限时长",
+            "storage": "50GB存储空间",
+            "ai": "高级AI模型",
+            "support": "优先支持",
+            "recordings": "会话录音"
+          },
+          "popular": "最受欢迎"
+        },
+        "team": {
+          "name": "团队版",
+          "price": "¥699",
+          "description": "适合开发团队",
+          "features": {
+            "everything": "专业版的所有功能",
+            "users": "最多10个用户",
+            "storage": "500GB存储空间",
+            "collaboration": "团队协作",
+            "analytics": "高级分析",
+            "sso": "SSO支持"
+          }
+        },
+        "enterprise": {
+          "name": "企业版",
+          "price": "定制",
+          "description": "适合大型组织",
+          "features": {
+            "everything": "团队版的所有功能",
+            "unlimited": "无限用户",
+            "storage": "无限存储",
+            "dedicated": "专属支持",
+            "sla": "SLA保证",
+            "onpremise": "本地部署选项"
+          }
+        }
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "您需要知道的一切",
+      "items": {
+        "what": {
+          "question": "什么是RemoteDevAI？",
+          "answer": "RemoteDevAI是一个平台，让您可以使用语音和视频从任何地方控制您的开发环境，并获得Claude和GPT-4提供的AI辅助。"
+        },
+        "platforms": {
+          "question": "支持哪些平台？",
+          "answer": "我们的桌面代理可在Windows、macOS和Linux上运行。移动应用可在iOS和Android上使用。"
+        },
+        "security": {
+          "question": "我的代码安全吗？",
+          "answer": "是的。所有通信都经过端到端加密，我们从不在服务器上存储您的代码。您的数据保留在您的设备上。"
+        },
+        "ai": {
+          "question": "我可以使用哪些AI模型？",
+          "answer": "我们支持Claude（Opus、Sonnet）、GPT-4、GPT-3.5和其他领先的AI模型。专业版用户可以访问所有模型。"
+        },
+        "offline": {
+          "question": "我可以离线使用吗？",
+          "answer": "桌面代理可以离线用于本地开发，但AI功能和远程访问需要互联网连接。"
+        },
+        "cancel": {
+          "question": "我可以随时取消吗？",
+          "answer": "是的，您可以随时取消订阅。您将保留访问权限直到账单周期结束。"
+        }
+      }
+    },
+    "cta": {
+      "title": "准备好改变您的工作流程了吗？",
+      "subtitle": "加入数千名从任何地方编程的开发者",
+      "getStarted": "免费开始",
+      "noCard": "无需信用卡"
+    }
+  },
+  "dashboard": {
+    "welcome": "欢迎回来，{name}",
+    "overview": "概览",
+    "recentProjects": "最近的项目",
+    "recentSessions": "最近的会话",
+    "stats": {
+      "totalProjects": "总项目数",
+      "totalSessions": "总会话数",
+      "hoursUsed": "使用小时数",
+      "storageUsed": "已用存储空间"
+    },
+    "projects": {
+      "title": "项目",
+      "create": "创建项目",
+      "empty": "还没有项目",
+      "emptyDescription": "创建您的第一个项目以开始",
+      "name": "项目名称",
+      "description": "描述",
+      "status": "状态",
+      "created": "创建时间",
+      "updated": "更新时间",
+      "delete": "删除项目",
+      "deleteConfirm": "您确定要删除此项目吗？"
+    },
+    "sessions": {
+      "title": "会话",
+      "start": "开始会话",
+      "end": "结束会话",
+      "duration": "持续时间",
+      "status": "状态",
+      "recording": "录音",
+      "transcript": "转录",
+      "empty": "还没有会话",
+      "emptyDescription": "开始会话以开始编程"
+    },
+    "recordings": {
+      "title": "录音",
+      "download": "下载",
+      "delete": "删除",
+      "empty": "还没有录音",
+      "emptyDescription": "会话录音将显示在这里"
+    },
+    "settings": {
+      "title": "设置",
+      "profile": "个人资料",
+      "account": "账户",
+      "preferences": "偏好设置",
+      "notifications": "通知",
+      "security": "安全",
+      "apiKeys": "API密钥",
+      "billing": "账单",
+      "language": "语言",
+      "theme": "主题",
+      "save": "保存更改",
+      "saved": "设置保存成功"
+    },
+    "billing": {
+      "title": "账单",
+      "currentPlan": "当前计划",
+      "upgrade": "升级计划",
+      "downgrade": "降级计划",
+      "cancel": "取消订阅",
+      "invoices": "发票",
+      "paymentMethod": "付款方式",
+      "updateCard": "更新卡片",
+      "nextBilling": "下次账单日期"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "登录您的账户",
+      "subtitle": "欢迎回来！请输入您的详细信息",
+      "email": "电子邮件地址",
+      "password": "密码",
+      "remember": "记住我",
+      "forgot": "忘记密码？",
+      "submit": "登录",
+      "noAccount": "还没有账户？",
+      "signUp": "注册"
+    },
+    "signUp": {
+      "title": "创建账户",
+      "subtitle": "今天开始您的免费试用",
+      "name": "全名",
+      "email": "电子邮件地址",
+      "password": "密码",
+      "confirm": "确认密码",
+      "agree": "我同意",
+      "terms": "服务条款",
+      "and": "和",
+      "privacy": "隐私政策",
+      "submit": "注册",
+      "hasAccount": "已经有账户？",
+      "signIn": "登录"
+    },
+    "forgotPassword": {
+      "title": "忘记密码？",
+      "subtitle": "别担心，我们会向您发送重置说明",
+      "email": "电子邮件地址",
+      "submit": "发送重置链接",
+      "back": "返回登录",
+      "sent": "已发送重置链接！请查看您的电子邮件"
+    },
+    "resetPassword": {
+      "title": "重置密码",
+      "subtitle": "输入您的新密码",
+      "password": "新密码",
+      "confirm": "确认新密码",
+      "submit": "重置密码",
+      "success": "密码重置成功"
+    }
+  },
+  "errors": {
+    "validation": {
+      "required": "{field}为必填项",
+      "email": "请输入有效的电子邮件地址",
+      "password": "密码必须至少8个字符",
+      "passwordMatch": "密码不匹配",
+      "minLength": "{field}必须至少{min}个字符",
+      "maxLength": "{field}最多{max}个字符"
+    },
+    "api": {
+      "serverError": "服务器错误。请稍后再试",
+      "networkError": "网络错误。请检查您的连接",
+      "unauthorized": "您无权执行此操作",
+      "notFound": "未找到请求的资源",
+      "timeout": "请求超时。请重试",
+      "unknown": "发生未知错误"
+    },
+    "network": {
+      "offline": "您已离线",
+      "slow": "网络连接缓慢",
+      "disconnected": "连接丢失",
+      "reconnecting": "正在重新连接..."
+    }
+  },
+  "notifications": {
+    "sessionStarted": {
+      "title": "会话已开始",
+      "message": "您的编程会话已开始"
+    },
+    "sessionEnded": {
+      "title": "会话已结束",
+      "message": "您的会话在{duration}后已结束"
+    },
+    "projectCreated": {
+      "title": "项目已创建",
+      "message": "{name}已成功创建"
+    },
+    "projectDeleted": {
+      "title": "项目已删除",
+      "message": "{name}已被删除"
+    },
+    "settingsSaved": {
+      "title": "设置已保存",
+      "message": "您的设置已更新"
+    },
+    "error": {
+      "title": "错误",
+      "message": "出了点问题"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "name": "remotedevai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Control AI coding assistants from your phone - Voice-controlled development with Claude, GPT-4, and more",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:mobile": "npm run dev -w apps/mobile",
+    "dev:desktop": "npm run dev -w apps/desktop",
+    "dev:web": "npm run dev -w apps/web",
+    "dev:cloud": "npm run dev -w apps/cloud",
+    "build": "npm run build --workspaces --if-present",
+    "build:mobile": "npm run build -w apps/mobile",
+    "build:desktop": "npm run build -w apps/desktop",
+    "build:web": "npm run build -w apps/web",
+    "build:cloud": "npm run build -w apps/cloud",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:watch": "npm run test:watch --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\""
+  },
+  "keywords": [
+    "ai",
+    "coding",
+    "voice",
+    "remote",
+    "claude",
+    "codex",
+    "gpt-4",
+    "anthropic",
+    "openai",
+    "development",
+    "automation",
+    "mobile",
+    "desktop",
+    "agent"
+  ],
+  "author": "Shjabbour",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shjabbour/RemoteDevAI.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.1",
+    "turbo": "^1.11.2",
+    "typescript": "^5.3.3"
+  }
+}

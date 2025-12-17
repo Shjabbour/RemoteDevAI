@@ -1,0 +1,8 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api
+
+# Sitemap
+Sitemap: https://remotedevai.com/sitemap.xml

@@ -1,0 +1,56 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>🎉 New Feature: {{featureName}}</h1>
+
+    <p>We're excited to announce a new feature that will enhance your RemoteDevAI experience!</p>
+
+    <div class="card" style="background-color: #f0f9ff; border-color: #bfdbfe;">
+      <h3 class="card-title" style="color: #1e40af;">Introducing: {{featureName}}</h3>
+      <p style="margin: 12px 0 0 0; color: #1e3a8a;">
+        {{featureDescription}}
+      </p>
+    </div>
+
+    <p><strong>Why you'll love it:</strong></p>
+
+    <ul>
+      <li>Boost your productivity with smarter AI assistance</li>
+      <li>Streamline your development workflow</li>
+      <li>Save time on repetitive tasks</li>
+      <li>Improve code quality and consistency</li>
+    </ul>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/features/{{featureName}}" class="button">Learn More</a>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">How to Get Started</h3>
+      <ol style="margin: 12px 0 0 20px;">
+        <li>Log in to your RemoteDevAI dashboard</li>
+        <li>Look for the new feature in your navigation menu</li>
+        <li>Follow the quick setup guide</li>
+        <li>Start using the feature in your next session!</li>
+      </ol>
+    </div>
+
+    <p>We'd love to hear your feedback! Try out the new feature and let us know what you think.</p>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/feedback" class="button button-secondary">Share Feedback</a>
+    </div>
+
+    <p>As always, if you have any questions or need assistance, our support team is here to help at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.</p>
+
+    <p>Happy coding!<br>
+    The RemoteDevAI Team</p>
+
+    <p style="font-size: 14px; color: #6b7280; margin-top: 24px;">
+      Don't want to receive feature announcements? You can <a href="{{appUrl}}/dashboard/settings">manage your email preferences</a> anytime.
+    </p>
+  </td>
+</tr>
+
+{{> footer}}

@@ -1,0 +1,36 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Payment Failed - Action Required</h1>
+
+    <p>We were unable to process your recent payment for RemoteDevAI. This could be due to:</p>
+
+    <ul>
+      <li>Insufficient funds</li>
+      <li>Expired card</li>
+      <li>Card declined by your bank</li>
+      <li>Incorrect billing information</li>
+    </ul>
+
+    <div class="card" style="background-color: #fef2f2; border-color: #fecaca;">
+      <p style="margin: 0; color: #991b1b;">
+        <strong>⚠️ Your subscription may be suspended soon</strong><br>
+        Please update your payment method to avoid service interruption.
+      </p>
+    </div>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/dashboard/billing" class="button">Update Payment Method</a>
+    </div>
+
+    <p>Once you update your payment method, we'll automatically retry the charge.</p>
+
+    <p><strong>Need help?</strong> Our support team is here to assist you. Contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.</p>
+
+    <p>Best regards,<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

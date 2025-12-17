@@ -1,0 +1,125 @@
+{
+  "common": {
+    "buttons": {
+      "getStarted": "开始使用",
+      "signIn": "登录",
+      "signUp": "注册",
+      "signOut": "退出登录",
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "edit": "编辑",
+      "create": "创建",
+      "close": "关闭",
+      "back": "返回",
+      "next": "下一步",
+      "submit": "提交",
+      "continue": "继续"
+    },
+    "labels": {
+      "email": "电子邮件",
+      "password": "密码",
+      "name": "姓名",
+      "language": "语言",
+      "loading": "加载中...",
+      "search": "搜索",
+      "filter": "筛选",
+      "sort": "排序"
+    },
+    "navigation": {
+      "home": "首页",
+      "projects": "项目",
+      "sessions": "会话",
+      "settings": "设置"
+    },
+    "status": {
+      "online": "在线",
+      "offline": "离线",
+      "connected": "已连接",
+      "disconnected": "已断开",
+      "active": "活动",
+      "inactive": "不活动"
+    }
+  },
+  "home": {
+    "title": "RemoteDevAI",
+    "subtitle": "随时随地编程",
+    "recentProjects": "最近的项目",
+    "recentSessions": "最近的会话",
+    "quickActions": "快速操作",
+    "startSession": "开始会话",
+    "noProjects": "还没有项目",
+    "noProjectsDescription": "创建项目开始",
+    "noSessions": "还没有会话",
+    "noSessionsDescription": "开始会话进行编程"
+  },
+  "projects": {
+    "title": "项目",
+    "create": "新建项目",
+    "empty": "还没有项目",
+    "emptyDescription": "创建您的第一个项目",
+    "name": "项目名称",
+    "description": "描述",
+    "created": "创建时间",
+    "updated": "更新时间",
+    "delete": "删除项目",
+    "deleteConfirm": "删除此项目？",
+    "details": "项目详情"
+  },
+  "sessions": {
+    "title": "会话",
+    "start": "开始",
+    "end": "结束",
+    "duration": "持续时间",
+    "status": "状态",
+    "empty": "还没有会话",
+    "emptyDescription": "开始编程创建会话",
+    "active": "活动会话",
+    "listening": "正在聆听...",
+    "speaking": "正在说话...",
+    "transcript": "转录",
+    "voiceCommand": "点击说话"
+  },
+  "settings": {
+    "title": "设置",
+    "profile": "个人资料",
+    "account": "账户",
+    "language": "语言",
+    "theme": "主题",
+    "notifications": "通知",
+    "security": "安全",
+    "about": "关于",
+    "version": "版本",
+    "logout": "退出登录",
+    "logoutConfirm": "确定要退出登录吗？",
+    "darkMode": "深色模式",
+    "pushNotifications": "推送通知",
+    "soundEffects": "音效",
+    "hapticFeedback": "触觉反馈"
+  },
+  "voice": {
+    "listening": "正在聆听...",
+    "processing": "处理中...",
+    "tapToSpeak": "点击说话",
+    "releaseToSend": "松开发送",
+    "holdToRecord": "按住录音",
+    "noPermission": "需要麦克风权限",
+    "error": "语音识别错误"
+  },
+  "errors": {
+    "general": "出了点问题",
+    "network": "网络错误。请检查连接",
+    "unauthorized": "未授权访问",
+    "notFound": "未找到",
+    "timeout": "请求超时",
+    "required": "{{field}}为必填项",
+    "invalid": "无效的{{field}}"
+  },
+  "notifications": {
+    "sessionStarted": "会话已开始",
+    "sessionEnded": "会话已结束",
+    "projectCreated": "项目已创建",
+    "projectDeleted": "项目已删除",
+    "settingsSaved": "设置已保存"
+  }
+}

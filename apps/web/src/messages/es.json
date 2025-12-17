@@ -1,0 +1,409 @@
+{
+  "common": {
+    "buttons": {
+      "getStarted": "Comenzar",
+      "getStartedFree": "Comenzar Gratis",
+      "learnMore": "Saber Más",
+      "watchDemo": "Ver Demo",
+      "signIn": "Iniciar Sesión",
+      "signUp": "Registrarse",
+      "signOut": "Cerrar Sesión",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "create": "Crear",
+      "close": "Cerrar",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "submit": "Enviar",
+      "continue": "Continuar",
+      "contactUs": "Contáctenos",
+      "documentation": "Documentación"
+    },
+    "labels": {
+      "email": "Correo Electrónico",
+      "password": "Contraseña",
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "message": "Mensaje",
+      "language": "Idioma",
+      "theme": "Tema",
+      "loading": "Cargando...",
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "sort": "Ordenar",
+      "actions": "Acciones"
+    },
+    "navigation": {
+      "home": "Inicio",
+      "features": "Características",
+      "pricing": "Precios",
+      "docs": "Documentación",
+      "blog": "Blog",
+      "dashboard": "Panel",
+      "projects": "Proyectos",
+      "settings": "Configuración",
+      "billing": "Facturación",
+      "recordings": "Grabaciones"
+    },
+    "status": {
+      "online": "En Línea",
+      "offline": "Desconectado",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "failed": "Fallido",
+      "inProgress": "En Progreso"
+    },
+    "time": {
+      "now": "Ahora",
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "tomorrow": "Mañana",
+      "lastWeek": "Semana pasada",
+      "lastMonth": "Mes pasado",
+      "minute": "minuto",
+      "minutes": "minutos",
+      "hour": "hora",
+      "hours": "horas",
+      "day": "día",
+      "days": "días",
+      "week": "semana",
+      "weeks": "semanas",
+      "month": "mes",
+      "months": "meses",
+      "year": "año",
+      "years": "años",
+      "ago": "hace"
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "Tu Desarrollador IA, En Cualquier Lugar",
+      "title": "Programa Desde",
+      "titleAccent": "Cualquier Lugar",
+      "subtitle": "Trabaja en tus proyectos remotamente con asistencia de voz y video potenciada por IA. Tu agente de escritorio transmite tu pantalla mientras programas sin usar las manos.",
+      "features": {
+        "trial": "Prueba gratuita de 14 días",
+        "noCard": "No se requiere tarjeta de crédito",
+        "cancel": "Cancela en cualquier momento"
+      },
+      "listening": "Escuchando...",
+      "aiPowered": "Potenciado por IA",
+      "realtime": "Asistencia en tiempo real",
+      "activeProjects": "Proyectos Activos",
+      "more": "+{count} más"
+    },
+    "features": {
+      "title": "Todo lo que necesitas",
+      "subtitle": "Funciones poderosas para el desarrollo moderno",
+      "list": {
+        "voice": {
+          "title": "Control por Voz",
+          "description": "Controla tu entorno de desarrollo sin usar las manos con reconocimiento de voz avanzado"
+        },
+        "video": {
+          "title": "Compartir Pantalla",
+          "description": "Ve tu escritorio en tiempo real desde cualquier lugar con transmisión de baja latencia"
+        },
+        "ai": {
+          "title": "Asistencia IA",
+          "description": "Obtén sugerencias y explicaciones de código inteligentes potenciadas por Claude y GPT-4"
+        },
+        "collaboration": {
+          "title": "Colaboración en Equipo",
+          "description": "Trabaja junto con tu equipo en tiempo real con sesiones compartidas"
+        },
+        "secure": {
+          "title": "Seguridad Empresarial",
+          "description": "Cifrado y seguridad de nivel bancario para todo tu código y comunicaciones"
+        },
+        "integrations": {
+          "title": "Integraciones IDE",
+          "description": "Funciona perfectamente con VS Code, IntelliJ y otros IDEs populares"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo funciona",
+      "subtitle": "Comienza en minutos",
+      "steps": {
+        "install": {
+          "title": "Instalar Agente de Escritorio",
+          "description": "Descarga e instala nuestro agente de escritorio ligero en tu máquina de desarrollo"
+        },
+        "download": {
+          "title": "Descargar App Móvil",
+          "description": "Obtén la aplicación RemoteDevAI en tu dispositivo iOS o Android"
+        },
+        "connect": {
+          "title": "Conectar y Programar",
+          "description": "Vincula tus dispositivos y comienza a programar desde cualquier lugar con asistencia IA"
+        }
+      }
+    },
+    "pricing": {
+      "title": "Precios simples y transparentes",
+      "subtitle": "Elige el plan que funcione para ti",
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "savePercent": "Ahorra {percent}%",
+      "plans": {
+        "free": {
+          "name": "Gratis",
+          "price": "$0",
+          "description": "Perfecto para probar RemoteDevAI",
+          "features": {
+            "sessions": "5 sesiones por mes",
+            "duration": "30 minutos por sesión",
+            "storage": "1 GB de almacenamiento",
+            "support": "Soporte comunitario"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "$29",
+          "description": "Para desarrolladores individuales",
+          "features": {
+            "sessions": "Sesiones ilimitadas",
+            "duration": "Duración ilimitada",
+            "storage": "50 GB de almacenamiento",
+            "ai": "Modelos IA avanzados",
+            "support": "Soporte prioritario",
+            "recordings": "Grabaciones de sesiones"
+          },
+          "popular": "Más Popular"
+        },
+        "team": {
+          "name": "Equipo",
+          "price": "$99",
+          "description": "Para equipos de desarrollo",
+          "features": {
+            "everything": "Todo en Pro",
+            "users": "Hasta 10 usuarios",
+            "storage": "500 GB de almacenamiento",
+            "collaboration": "Colaboración en equipo",
+            "analytics": "Análisis avanzado",
+            "sso": "Soporte SSO"
+          }
+        },
+        "enterprise": {
+          "name": "Empresa",
+          "price": "Personalizado",
+          "description": "Para organizaciones grandes",
+          "features": {
+            "everything": "Todo en Equipo",
+            "unlimited": "Usuarios ilimitados",
+            "storage": "Almacenamiento ilimitado",
+            "dedicated": "Soporte dedicado",
+            "sla": "Garantía SLA",
+            "onpremise": "Opción local"
+          }
+        }
+      }
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "subtitle": "Todo lo que necesitas saber",
+      "items": {
+        "what": {
+          "question": "¿Qué es RemoteDevAI?",
+          "answer": "RemoteDevAI es una plataforma que te permite controlar tu entorno de desarrollo desde cualquier lugar usando voz y video, con asistencia IA potenciada por Claude y GPT-4."
+        },
+        "platforms": {
+          "question": "¿Qué plataformas son compatibles?",
+          "answer": "Nuestro agente de escritorio funciona en Windows, macOS y Linux. La aplicación móvil está disponible en iOS y Android."
+        },
+        "security": {
+          "question": "¿Es seguro mi código?",
+          "answer": "Sí. Todas las comunicaciones están cifradas de extremo a extremo, y nunca almacenamos tu código en nuestros servidores. Tus datos permanecen en tus dispositivos."
+        },
+        "ai": {
+          "question": "¿Qué modelos IA puedo usar?",
+          "answer": "Soportamos Claude (Opus, Sonnet), GPT-4, GPT-3.5 y otros modelos IA líderes. Los usuarios Pro obtienen acceso a todos los modelos."
+        },
+        "offline": {
+          "question": "¿Puedo usarlo sin conexión?",
+          "answer": "El agente de escritorio puede funcionar sin conexión para desarrollo local, pero las funciones IA y el acceso remoto requieren conexión a internet."
+        },
+        "cancel": {
+          "question": "¿Puedo cancelar en cualquier momento?",
+          "answer": "Sí, puedes cancelar tu suscripción en cualquier momento. Conservarás el acceso hasta el final de tu período de facturación."
+        }
+      }
+    },
+    "cta": {
+      "title": "¿Listo para transformar tu flujo de trabajo?",
+      "subtitle": "Únete a miles de desarrolladores programando desde cualquier lugar",
+      "getStarted": "Comenzar Gratis",
+      "noCard": "No se requiere tarjeta de crédito"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bienvenido de nuevo, {name}",
+    "overview": "Resumen",
+    "recentProjects": "Proyectos Recientes",
+    "recentSessions": "Sesiones Recientes",
+    "stats": {
+      "totalProjects": "Proyectos Totales",
+      "totalSessions": "Sesiones Totales",
+      "hoursUsed": "Horas Usadas",
+      "storageUsed": "Almacenamiento Usado"
+    },
+    "projects": {
+      "title": "Proyectos",
+      "create": "Crear Proyecto",
+      "empty": "Aún no hay proyectos",
+      "emptyDescription": "Crea tu primer proyecto para comenzar",
+      "name": "Nombre del Proyecto",
+      "description": "Descripción",
+      "status": "Estado",
+      "created": "Creado",
+      "updated": "Actualizado",
+      "delete": "Eliminar Proyecto",
+      "deleteConfirm": "¿Estás seguro de que deseas eliminar este proyecto?"
+    },
+    "sessions": {
+      "title": "Sesiones",
+      "start": "Iniciar Sesión",
+      "end": "Finalizar Sesión",
+      "duration": "Duración",
+      "status": "Estado",
+      "recording": "Grabación",
+      "transcript": "Transcripción",
+      "empty": "Aún no hay sesiones",
+      "emptyDescription": "Inicia una sesión para comenzar a programar"
+    },
+    "recordings": {
+      "title": "Grabaciones",
+      "download": "Descargar",
+      "delete": "Eliminar",
+      "empty": "Aún no hay grabaciones",
+      "emptyDescription": "Las grabaciones de sesiones aparecerán aquí"
+    },
+    "settings": {
+      "title": "Configuración",
+      "profile": "Perfil",
+      "account": "Cuenta",
+      "preferences": "Preferencias",
+      "notifications": "Notificaciones",
+      "security": "Seguridad",
+      "apiKeys": "Claves API",
+      "billing": "Facturación",
+      "language": "Idioma",
+      "theme": "Tema",
+      "save": "Guardar Cambios",
+      "saved": "Configuración guardada exitosamente"
+    },
+    "billing": {
+      "title": "Facturación",
+      "currentPlan": "Plan Actual",
+      "upgrade": "Actualizar Plan",
+      "downgrade": "Degradar Plan",
+      "cancel": "Cancelar Suscripción",
+      "invoices": "Facturas",
+      "paymentMethod": "Método de Pago",
+      "updateCard": "Actualizar Tarjeta",
+      "nextBilling": "Próxima fecha de facturación"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Inicia sesión en tu cuenta",
+      "subtitle": "¡Bienvenido de nuevo! Por favor ingresa tus detalles",
+      "email": "Dirección de correo electrónico",
+      "password": "Contraseña",
+      "remember": "Recuérdame",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "submit": "Iniciar Sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUp": "Regístrate"
+    },
+    "signUp": {
+      "title": "Crea una cuenta",
+      "subtitle": "Comienza tu prueba gratuita hoy",
+      "name": "Nombre completo",
+      "email": "Dirección de correo electrónico",
+      "password": "Contraseña",
+      "confirm": "Confirmar contraseña",
+      "agree": "Acepto los",
+      "terms": "Términos de Servicio",
+      "and": "y la",
+      "privacy": "Política de Privacidad",
+      "submit": "Registrarse",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Inicia sesión"
+    },
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "No te preocupes, te enviaremos instrucciones de restablecimiento",
+      "email": "Dirección de correo electrónico",
+      "submit": "Enviar Enlace de Restablecimiento",
+      "back": "Volver a iniciar sesión",
+      "sent": "¡Enlace enviado! Revisa tu correo electrónico"
+    },
+    "resetPassword": {
+      "title": "Restablece tu contraseña",
+      "subtitle": "Ingresa tu nueva contraseña",
+      "password": "Nueva contraseña",
+      "confirm": "Confirmar nueva contraseña",
+      "submit": "Restablecer Contraseña",
+      "success": "Contraseña restablecida exitosamente"
+    }
+  },
+  "errors": {
+    "validation": {
+      "required": "{field} es requerido",
+      "email": "Por favor ingresa una dirección de correo electrónico válida",
+      "password": "La contraseña debe tener al menos 8 caracteres",
+      "passwordMatch": "Las contraseñas no coinciden",
+      "minLength": "{field} debe tener al menos {min} caracteres",
+      "maxLength": "{field} debe tener como máximo {max} caracteres"
+    },
+    "api": {
+      "serverError": "Error del servidor. Por favor intenta más tarde",
+      "networkError": "Error de red. Verifica tu conexión",
+      "unauthorized": "No estás autorizado para realizar esta acción",
+      "notFound": "No se encontró el recurso solicitado",
+      "timeout": "Tiempo de espera agotado. Por favor intenta de nuevo",
+      "unknown": "Ocurrió un error desconocido"
+    },
+    "network": {
+      "offline": "Estás desconectado",
+      "slow": "Conexión de red lenta",
+      "disconnected": "Conexión perdida",
+      "reconnecting": "Reconectando..."
+    }
+  },
+  "notifications": {
+    "sessionStarted": {
+      "title": "Sesión Iniciada",
+      "message": "Tu sesión de programación ha comenzado"
+    },
+    "sessionEnded": {
+      "title": "Sesión Finalizada",
+      "message": "Tu sesión ha finalizado después de {duration}"
+    },
+    "projectCreated": {
+      "title": "Proyecto Creado",
+      "message": "{name} ha sido creado exitosamente"
+    },
+    "projectDeleted": {
+      "title": "Proyecto Eliminado",
+      "message": "{name} ha sido eliminado"
+    },
+    "settingsSaved": {
+      "title": "Configuración Guardada",
+      "message": "Tu configuración ha sido actualizada"
+    },
+    "error": {
+      "title": "Error",
+      "message": "Algo salió mal"
+    }
+  }
+}

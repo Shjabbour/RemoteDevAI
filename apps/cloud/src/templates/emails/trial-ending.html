@@ -1,0 +1,41 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Your Trial Ends in {{daysLeft}} {{pluralize daysLeft "Day" "Days"}}</h1>
+
+    <p>Your RemoteDevAI trial is coming to an end soon. We hope you've enjoyed exploring our AI-powered development platform!</p>
+
+    <div class="card">
+      <h3 class="card-title">What you've accomplished during your trial:</h3>
+      <p style="margin: 12px 0 0 0; color: #6b7280;">
+        You've experienced the power of AI-assisted development with RemoteDevAI. Don't lose access to these amazing features!
+      </p>
+    </div>
+
+    <p><strong>Upgrade now to continue enjoying:</strong></p>
+
+    <ul>
+      <li>Unlimited AI coding sessions</li>
+      <li>Advanced AI models (GPT-4, Claude Opus)</li>
+      <li>Cloud storage for your projects</li>
+      <li>Session recording and playback</li>
+      <li>Priority support</li>
+    </ul>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/pricing" class="button">Upgrade Now</a>
+    </div>
+
+    <p style="font-size: 14px; color: #6b7280;">
+      After your trial ends, you'll be moved to our Free plan. You can upgrade anytime to unlock premium features.
+    </p>
+
+    <p>Questions about pricing or features? <a href="mailto:{{supportEmail}}">We're here to help!</a></p>
+
+    <p>Best regards,<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

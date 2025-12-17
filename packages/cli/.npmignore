@@ -1,0 +1,44 @@
+# Source files
+src/
+tsconfig.json
+
+# Tests
+tests/
+*.test.ts
+*.spec.ts
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation (keep README.md)
+docs/
+examples/
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.*
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# macOS
+.DS_Store

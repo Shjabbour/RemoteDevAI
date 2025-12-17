@@ -1,0 +1,64 @@
+{
+  "name": "RemoteDevAI MCP Tools",
+  "version": "1.0.0",
+  "description": "Screen capture, recording, browser automation, and development tools for Claude Code",
+  "tools": {
+    "screen_capture": {
+      "enabled": true,
+      "max_resolution": "1920x1080",
+      "formats": ["png", "jpeg", "webp"]
+    },
+    "screen_recording": {
+      "enabled": true,
+      "max_duration": 300,
+      "default_fps": 30,
+      "default_quality": "high",
+      "formats": ["mp4", "webm"]
+    },
+    "browser_automation": {
+      "enabled": true,
+      "browsers": ["chromium", "firefox", "webkit"],
+      "headless": true,
+      "timeout": 30000
+    },
+    "terminal_capture": {
+      "enabled": true,
+      "max_lines": 1000
+    },
+    "file_preview": {
+      "enabled": true,
+      "max_file_size": 10485760,
+      "supported_types": ["image", "video", "text", "code"]
+    },
+    "notifications": {
+      "enabled": true,
+      "providers": ["native", "webhook"]
+    },
+    "video_tools": {
+      "enabled": true,
+      "max_file_size": 104857600
+    },
+    "code_runner": {
+      "enabled": true,
+      "timeout": 60000,
+      "sandbox": true,
+      "allowed_languages": ["javascript", "typescript", "python", "bash"]
+    }
+  },
+  "security": {
+    "require_confirmation": true,
+    "allowed_domains": [],
+    "blocked_domains": [],
+    "max_file_size": 104857600,
+    "max_recording_duration": 600
+  },
+  "storage": {
+    "base_path": "./recordings",
+    "auto_cleanup": true,
+    "retention_days": 7
+  },
+  "logging": {
+    "level": "info",
+    "file": "./logs/mcp-tools.log"
+  }
+}

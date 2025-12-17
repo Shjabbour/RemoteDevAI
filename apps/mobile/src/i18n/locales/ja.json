@@ -1,0 +1,125 @@
+{
+  "common": {
+    "buttons": {
+      "getStarted": "始める",
+      "signIn": "ログイン",
+      "signUp": "新規登録",
+      "signOut": "ログアウト",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "create": "作成",
+      "close": "閉じる",
+      "back": "戻る",
+      "next": "次へ",
+      "submit": "送信",
+      "continue": "続ける"
+    },
+    "labels": {
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "name": "名前",
+      "language": "言語",
+      "loading": "読み込み中...",
+      "search": "検索",
+      "filter": "フィルター",
+      "sort": "並び替え"
+    },
+    "navigation": {
+      "home": "ホーム",
+      "projects": "プロジェクト",
+      "sessions": "セッション",
+      "settings": "設定"
+    },
+    "status": {
+      "online": "オンライン",
+      "offline": "オフライン",
+      "connected": "接続済み",
+      "disconnected": "切断済み",
+      "active": "アクティブ",
+      "inactive": "非アクティブ"
+    }
+  },
+  "home": {
+    "title": "RemoteDevAI",
+    "subtitle": "どこからでもコーディング",
+    "recentProjects": "最近のプロジェクト",
+    "recentSessions": "最近のセッション",
+    "quickActions": "クイックアクション",
+    "startSession": "セッション開始",
+    "noProjects": "プロジェクトがありません",
+    "noProjectsDescription": "プロジェクトを作成",
+    "noSessions": "セッションがありません",
+    "noSessionsDescription": "セッションを開始"
+  },
+  "projects": {
+    "title": "プロジェクト",
+    "create": "新規プロジェクト",
+    "empty": "プロジェクトなし",
+    "emptyDescription": "最初のプロジェクトを作成",
+    "name": "プロジェクト名",
+    "description": "説明",
+    "created": "作成日",
+    "updated": "更新日",
+    "delete": "プロジェクトを削除",
+    "deleteConfirm": "このプロジェクトを削除？",
+    "details": "プロジェクト詳細"
+  },
+  "sessions": {
+    "title": "セッション",
+    "start": "開始",
+    "end": "終了",
+    "duration": "期間",
+    "status": "ステータス",
+    "empty": "セッションなし",
+    "emptyDescription": "セッションを開始",
+    "active": "アクティブセッション",
+    "listening": "聞いています...",
+    "speaking": "話しています...",
+    "transcript": "トランスクリプト",
+    "voiceCommand": "タップして話す"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": "プロフィール",
+    "account": "アカウント",
+    "language": "言語",
+    "theme": "テーマ",
+    "notifications": "通知",
+    "security": "セキュリティ",
+    "about": "について",
+    "version": "バージョン",
+    "logout": "ログアウト",
+    "logoutConfirm": "ログアウトしますか？",
+    "darkMode": "ダークモード",
+    "pushNotifications": "プッシュ通知",
+    "soundEffects": "サウンド効果",
+    "hapticFeedback": "触覚フィードバック"
+  },
+  "voice": {
+    "listening": "聞いています...",
+    "processing": "処理中...",
+    "tapToSpeak": "タップして話す",
+    "releaseToSend": "離して送信",
+    "holdToRecord": "押して録音",
+    "noPermission": "マイクの許可が必要",
+    "error": "音声認識エラー"
+  },
+  "errors": {
+    "general": "問題が発生しました",
+    "network": "ネットワークエラー。接続を確認",
+    "unauthorized": "未承認アクセス",
+    "notFound": "見つかりません",
+    "timeout": "タイムアウト",
+    "required": "{{field}}は必須です",
+    "invalid": "無効な{{field}}"
+  },
+  "notifications": {
+    "sessionStarted": "セッション開始",
+    "sessionEnded": "セッション終了",
+    "projectCreated": "プロジェクト作成",
+    "projectDeleted": "プロジェクト削除",
+    "settingsSaved": "設定保存"
+  }
+}

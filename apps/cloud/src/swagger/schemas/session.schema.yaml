@@ -1,0 +1,149 @@
+components:
+  schemas:
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique session identifier
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        projectId:
+          type: string
+          format: uuid
+          description: Associated project ID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        userId:
+          type: string
+          format: uuid
+          description: Session owner's user ID
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        title:
+          type: string
+          description: Session title
+          example: "Implement user authentication"
+          nullable: true
+        summary:
+          type: string
+          description: Session summary
+          example: "Added JWT authentication and login/register endpoints"
+          nullable: true
+        messages:
+          type: array
+          description: Conversation messages (JSON array)
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [user, assistant, system]
+              content:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+          example:
+            - role: "user"
+              content: "Help me implement authentication"
+              timestamp: "2025-01-15T10:00:00Z"
+            - role: "assistant"
+              content: "I'll help you implement JWT authentication"
+              timestamp: "2025-01-15T10:00:05Z"
+        status:
+          type: string
+          enum: [ACTIVE, PAUSED, COMPLETED, ARCHIVED]
+          description: Session status
+          example: "ACTIVE"
+        startedAt:
+          type: string
+          format: date-time
+          description: Session start timestamp
+          example: "2025-01-15T10:00:00Z"
+        endedAt:
+          type: string
+          format: date-time
+          description: Session end timestamp
+          example: "2025-01-15T12:30:00Z"
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T12:30:00Z"
+        project:
+          type: object
+          description: Associated project details
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        _count:
+          type: object
+          description: Related entity counts
+          properties:
+            recordings:
+              type: integer
+              example: 3
+      required:
+        - id
+        - projectId
+        - userId
+        - status
+        - startedAt
+        - createdAt
+        - updatedAt
+
+    CreateSessionRequest:
+      type: object
+      required:
+        - projectId
+      properties:
+        projectId:
+          type: string
+          format: uuid
+          description: ID of the project this session belongs to
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        title:
+          type: string
+          maxLength: 255
+          description: Session title (optional)
+          example: "Implementing new feature"
+
+    UpdateSessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          example: "Updated session title"
+        summary:
+          type: string
+          maxLength: 2000
+          example: "Session summary with achievements"
+        status:
+          type: string
+          enum: [ACTIVE, PAUSED, COMPLETED, ARCHIVED]
+          example: "COMPLETED"
+        messages:
+          type: array
+          description: Updated conversation messages
+          items:
+            type: object
+
+    SessionList:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+        pagination:
+          $ref: '#/components/schemas/Pagination'

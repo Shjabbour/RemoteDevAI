@@ -1,0 +1,31 @@
+# =============================================================================
+# Sentry - Security and Privacy
+# =============================================================================
+# Add these lines to your .gitignore file to prevent committing sensitive data
+
+# Sentry CLI configuration with auth token
+.sentryclirc.local
+
+# Sentry auth token (if stored in file)
+.sentry-auth-token
+
+# Sentry build artifacts
+.sentry-*
+
+# Source map files (uploaded to Sentry, not needed in repo)
+*.map
+*.js.map
+*.css.map
+
+# Sentry release files
+sentry-release.txt
+
+# Environment files with Sentry secrets
+.env.local
+.env.production.local
+.env.sentry
+
+# Sentry debug files
+sentry-debug-*.log
+
+# Note: Add these to your root .gitignore or app-specific .gitignore files

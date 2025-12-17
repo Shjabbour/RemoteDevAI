@@ -1,0 +1,49 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Desktop Agent Went Offline</h1>
+
+    <p>Your RemoteDevAI desktop agent "<strong>{{agentName}}</strong>" has gone offline.</p>
+
+    <div class="card" style="background-color: #fffbeb; border-color: #fde68a;">
+      <table style="width: 100%;">
+        <tr>
+          <td style="color: #92400e;"><strong>Agent Name:</strong></td>
+          <td style="text-align: right; color: #92400e;">{{agentName}}</td>
+        </tr>
+        <tr>
+          <td style="color: #92400e; padding-top: 8px;"><strong>Last Seen:</strong></td>
+          <td style="text-align: right; color: #92400e; padding-top: 8px;">{{lastSeen}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p><strong>What does this mean?</strong></p>
+
+    <ul>
+      <li>Your desktop agent is no longer connected to RemoteDevAI</li>
+      <li>You won't be able to start new coding sessions until it's back online</li>
+      <li>Any active sessions may have been interrupted</li>
+    </ul>
+
+    <p><strong>How to reconnect:</strong></p>
+
+    <ol>
+      <li>Make sure your computer is connected to the internet</li>
+      <li>Restart the RemoteDevAI desktop agent</li>
+      <li>If the problem persists, try reinstalling the agent</li>
+    </ol>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/dashboard/agents" class="button">View Agent Status</a>
+    </div>
+
+    <p>If you continue to experience issues, please contact our support team at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.</p>
+
+    <p>Best regards,<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

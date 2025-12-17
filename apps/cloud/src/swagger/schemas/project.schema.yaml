@@ -1,0 +1,136 @@
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique project identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        userId:
+          type: string
+          format: uuid
+          description: Owner's user ID
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        name:
+          type: string
+          description: Project name
+          example: "E-commerce Platform"
+        description:
+          type: string
+          description: Project description
+          example: "A modern e-commerce platform built with React and Node.js"
+          nullable: true
+        settings:
+          type: object
+          description: Project-specific settings (JSON object)
+          additionalProperties: true
+          example:
+            theme: "dark"
+            language: "typescript"
+        isActive:
+          type: boolean
+          description: Whether project is currently active
+          example: true
+        isArchived:
+          type: boolean
+          description: Whether project is archived
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Project creation timestamp
+          example: "2025-01-10T09:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2025-01-15T14:30:00Z"
+      required:
+        - id
+        - userId
+        - name
+        - isActive
+        - isArchived
+        - createdAt
+        - updatedAt
+
+    CreateProjectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Project name
+          example: "My New Project"
+        description:
+          type: string
+          maxLength: 1000
+          description: Project description (optional)
+          example: "A web application for managing tasks"
+        settings:
+          type: object
+          description: Initial project settings
+          additionalProperties: true
+          example:
+            defaultModel: "claude-3-opus"
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: "Updated Project Name"
+        description:
+          type: string
+          maxLength: 1000
+          example: "Updated description"
+        settings:
+          type: object
+          additionalProperties: true
+          example:
+            theme: "light"
+        isActive:
+          type: boolean
+          example: true
+
+    ProjectList:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    ProjectStatistics:
+      type: object
+      properties:
+        totalSessions:
+          type: integer
+          description: Total sessions in this project
+          example: 45
+        activeSessions:
+          type: integer
+          description: Currently active sessions
+          example: 2
+        totalRecordings:
+          type: integer
+          description: Total recordings in this project
+          example: 23
+        lastSessionAt:
+          type: string
+          format: date-time
+          description: Timestamp of last session
+          example: "2025-01-15T16:20:00Z"
+          nullable: true

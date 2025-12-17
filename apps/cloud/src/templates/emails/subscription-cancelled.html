@@ -1,0 +1,32 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Subscription Cancelled</h1>
+
+    <p>We're sorry to see you go! Your RemoteDevAI {{tier}} subscription has been cancelled.</p>
+
+    <div class="card">
+      <p style="margin: 0;"><strong>What happens next?</strong></p>
+      <ul style="margin: 12px 0 0 20px;">
+        <li>You'll continue to have access to {{tier}} features until <strong>{{endDate}}</strong></li>
+        <li>After that date, your account will revert to the Free plan</li>
+        <li>Your data and projects will remain safe and accessible</li>
+        <li>You won't be charged again unless you resubscribe</li>
+      </ul>
+    </div>
+
+    <p>We'd love to hear your feedback! If you have a moment, please let us know why you cancelled:</p>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/feedback?type=cancellation" class="button button-secondary">Share Feedback</a>
+    </div>
+
+    <p>Changed your mind? You can reactivate your subscription anytime from your <a href="{{appUrl}}/dashboard/billing">billing settings</a>.</p>
+
+    <p>Thank you for being a RemoteDevAI customer. We hope to see you again!<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

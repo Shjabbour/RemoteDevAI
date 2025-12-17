@@ -1,0 +1,41 @@
+{{> header}}
+
+<tr>
+  <td class="email-content">
+    <h1>Welcome to RemoteDevAI! 👋</h1>
+
+    <p>Hi{{#if userName}} {{userName}}{{/if}},</p>
+
+    <p>Welcome to RemoteDevAI - the future of AI-powered remote development! We're thrilled to have you on board.</p>
+
+    <p>With RemoteDevAI, you can:</p>
+
+    <ul>
+      <li><strong>Code with AI</strong> - Let our advanced AI agents help you write, debug, and optimize code</li>
+      <li><strong>Work remotely</strong> - Access your development environment from anywhere</li>
+      <li><strong>Record sessions</strong> - Capture your coding sessions for review and collaboration</li>
+      <li><strong>Collaborate seamlessly</strong> - Share projects and work together in real-time</li>
+    </ul>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="{{appUrl}}/dashboard" class="button">Get Started</a>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">🚀 Quick Start Guide</h3>
+      <ol style="margin: 12px 0 0 20px;">
+        <li>Download and install the desktop agent</li>
+        <li>Create your first project</li>
+        <li>Start a coding session with AI assistance</li>
+        <li>Explore features and customize your workflow</li>
+      </ol>
+    </div>
+
+    <p>If you have any questions, feel free to reach out to our support team at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>. We're here to help!</p>
+
+    <p>Happy coding!<br>
+    The RemoteDevAI Team</p>
+  </td>
+</tr>
+
+{{> footer}}

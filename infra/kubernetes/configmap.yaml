@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: remotedevai-config
+  namespace: remotedevai
+data:
+  # Application Configuration
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+
+  # Database Configuration
+  POSTGRES_DB: "remotedevai"
+  POSTGRES_USER: "remotedevai"
+
+  # Redis Configuration
+  REDIS_PORT: "6379"
+
+  # S3/MinIO Configuration
+  S3_BUCKET: "remotedevai-files"
+  S3_REGION: "us-east-1"
+
+  # JWT Configuration
+  JWT_EXPIRES_IN: "7d"
+
+  # CORS Configuration
+  CORS_ORIGIN: "https://app.remotedevai.com"
+
+  # Ports
+  CLOUD_PORT: "3000"
+  WS_PORT: "3001"

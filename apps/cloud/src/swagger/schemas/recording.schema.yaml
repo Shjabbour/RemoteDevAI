@@ -1,0 +1,199 @@
+components:
+  schemas:
+    Recording:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique recording identifier
+          example: "550e8400-e29b-41d4-a716-446655440003"
+        sessionId:
+          type: string
+          format: uuid
+          description: Associated session ID
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        title:
+          type: string
+          description: Recording title
+          example: "Screen recording - Feature implementation"
+          nullable: true
+        url:
+          type: string
+          format: uri
+          description: URL to access the recording
+          example: "https://storage.remotedevai.com/recordings/550e8400.webm"
+        thumbnailUrl:
+          type: string
+          format: uri
+          description: URL to recording thumbnail
+          example: "https://storage.remotedevai.com/thumbnails/550e8400.jpg"
+          nullable: true
+        duration:
+          type: integer
+          description: Recording duration in seconds
+          example: 1847
+          nullable: true
+        fileSize:
+          type: integer
+          description: File size in bytes
+          example: 52428800
+          nullable: true
+        mimeType:
+          type: string
+          description: File MIME type
+          example: "video/webm"
+          default: "video/webm"
+        status:
+          type: string
+          enum: [UPLOADING, PROCESSING, READY, FAILED]
+          description: Recording processing status
+          example: "READY"
+        recordedAt:
+          type: string
+          format: date-time
+          description: When the recording was created
+          example: "2025-01-15T11:00:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T11:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T11:35:00Z"
+        session:
+          type: object
+          description: Associated session details
+          properties:
+            id:
+              type: string
+              format: uuid
+            title:
+              type: string
+              nullable: true
+            project:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+      required:
+        - id
+        - sessionId
+        - url
+        - mimeType
+        - status
+        - recordedAt
+        - createdAt
+        - updatedAt
+
+    CreateRecordingRequest:
+      type: object
+      required:
+        - sessionId
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: ID of the session this recording belongs to
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        title:
+          type: string
+          maxLength: 255
+          description: Recording title (optional)
+          example: "Feature implementation recording"
+        duration:
+          type: integer
+          minimum: 0
+          description: Recording duration in seconds
+          example: 1847
+        fileSize:
+          type: integer
+          minimum: 0
+          description: File size in bytes
+          example: 52428800
+        mimeType:
+          type: string
+          description: File MIME type
+          example: "video/webm"
+          default: "video/webm"
+
+    UpdateRecordingRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          example: "Updated recording title"
+        thumbnailUrl:
+          type: string
+          format: uri
+          example: "https://storage.remotedevai.com/thumbnails/new.jpg"
+        status:
+          type: string
+          enum: [UPLOADING, PROCESSING, READY, FAILED]
+          example: "READY"
+        url:
+          type: string
+          format: uri
+          example: "https://storage.remotedevai.com/recordings/final.webm"
+
+    RecordingList:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recording'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    UploadUrlResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            uploadUrl:
+              type: string
+              format: uri
+              description: Presigned URL for uploading the recording
+              example: "https://s3.amazonaws.com/bucket/key?signature=..."
+            publicUrl:
+              type: string
+              format: uri
+              description: Public URL where the recording will be accessible
+              example: "https://storage.remotedevai.com/recordings/550e8400.webm"
+            expiresIn:
+              type: integer
+              description: Seconds until the upload URL expires
+              example: 3600
+
+    DownloadUrlResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            url:
+              type: string
+              format: uri
+              description: Presigned URL for downloading the recording
+              example: "https://s3.amazonaws.com/bucket/key?signature=..."
+            expiresIn:
+              type: integer
+              description: Seconds until the download URL expires (null if permanent)
+              example: 3600
+              nullable: true

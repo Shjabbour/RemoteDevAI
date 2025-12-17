@@ -1,0 +1,125 @@
+{
+  "common": {
+    "buttons": {
+      "getStarted": "Get Started",
+      "signIn": "Sign In",
+      "signUp": "Sign Up",
+      "signOut": "Sign Out",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "close": "Close",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit",
+      "continue": "Continue"
+    },
+    "labels": {
+      "email": "Email",
+      "password": "Password",
+      "name": "Name",
+      "language": "Language",
+      "loading": "Loading...",
+      "search": "Search",
+      "filter": "Filter",
+      "sort": "Sort"
+    },
+    "navigation": {
+      "home": "Home",
+      "projects": "Projects",
+      "sessions": "Sessions",
+      "settings": "Settings"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "home": {
+    "title": "RemoteDevAI",
+    "subtitle": "Code from anywhere",
+    "recentProjects": "Recent Projects",
+    "recentSessions": "Recent Sessions",
+    "quickActions": "Quick Actions",
+    "startSession": "Start Session",
+    "noProjects": "No projects yet",
+    "noProjectsDescription": "Create a project to get started",
+    "noSessions": "No sessions yet",
+    "noSessionsDescription": "Start a session to begin coding"
+  },
+  "projects": {
+    "title": "Projects",
+    "create": "New Project",
+    "empty": "No projects yet",
+    "emptyDescription": "Create your first project",
+    "name": "Project Name",
+    "description": "Description",
+    "created": "Created",
+    "updated": "Updated",
+    "delete": "Delete Project",
+    "deleteConfirm": "Delete this project?",
+    "details": "Project Details"
+  },
+  "sessions": {
+    "title": "Sessions",
+    "start": "Start Session",
+    "end": "End Session",
+    "duration": "Duration",
+    "status": "Status",
+    "empty": "No sessions yet",
+    "emptyDescription": "Start coding to create a session",
+    "active": "Active Session",
+    "listening": "Listening...",
+    "speaking": "Speaking...",
+    "transcript": "Transcript",
+    "voiceCommand": "Tap to speak"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "account": "Account",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "security": "Security",
+    "about": "About",
+    "version": "Version",
+    "logout": "Log Out",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "darkMode": "Dark Mode",
+    "pushNotifications": "Push Notifications",
+    "soundEffects": "Sound Effects",
+    "hapticFeedback": "Haptic Feedback"
+  },
+  "voice": {
+    "listening": "Listening...",
+    "processing": "Processing...",
+    "tapToSpeak": "Tap to speak",
+    "releaseToSend": "Release to send",
+    "holdToRecord": "Hold to record",
+    "noPermission": "Microphone permission required",
+    "error": "Voice recognition error"
+  },
+  "errors": {
+    "general": "Something went wrong",
+    "network": "Network error. Check your connection",
+    "unauthorized": "Unauthorized access",
+    "notFound": "Not found",
+    "timeout": "Request timeout",
+    "required": "{{field}} is required",
+    "invalid": "Invalid {{field}}"
+  },
+  "notifications": {
+    "sessionStarted": "Session started",
+    "sessionEnded": "Session ended",
+    "projectCreated": "Project created",
+    "projectDeleted": "Project deleted",
+    "settingsSaved": "Settings saved"
+  }
+}

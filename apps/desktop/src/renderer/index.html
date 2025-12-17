@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>RemoteDevAI Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <h1>RemoteDevAI Settings</h1>
+          <div class="status-badge" id="statusBadge">
+            <span class="status-dot"></span>
+            <span class="status-text">Disconnected</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main">
+        <div class="container">
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab active" data-tab="connection">Connection</button>
+            <button class="tab" data-tab="claude">Claude Code</button>
+            <button class="tab" data-tab="services">Services</button>
+            <button class="tab" data-tab="settings">Settings</button>
+            <button class="tab" data-tab="logs">Logs</button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="tab-content">
+            <!-- Connection Tab -->
+            <div class="tab-pane active" id="connection">
+              <h2>Connection Status</h2>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Cloud Connection</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Device ID</label>
+                    <input type="text" id="deviceId" readonly />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Auth Token</label>
+                    <input type="password" id="authToken" placeholder="Enter your auth token" />
+                    <button id="saveTokenBtn" class="btn btn-primary">Save Token</button>
+                  </div>
+
+                  <div class="stats-grid">
+                    <div class="stat">
+                      <div class="stat-label">Status</div>
+                      <div class="stat-value" id="connectionStatus">Disconnected</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-label">Messages Sent</div>
+                      <div class="stat-value" id="messagesSent">0</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-label">Messages Received</div>
+                      <div class="stat-value" id="messagesReceived">0</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-label">Bytes Transferred</div>
+                      <div class="stat-value" id="bytesTransferred">0</div>
+                    </div>
+                  </div>
+
+                  <div class="button-group">
+                    <button id="connectBtn" class="btn btn-primary">Connect</button>
+                    <button id="disconnectBtn" class="btn btn-secondary" disabled>
+                      Disconnect
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Claude Code Tab -->
+            <div class="tab-pane" id="claude">
+              <h2>Claude Code CLI</h2>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Status</h3>
+                </div>
+                <div class="card-body">
+                  <div class="stats-grid">
+                    <div class="stat">
+                      <div class="stat-label">Running</div>
+                      <div class="stat-value" id="claudeRunning">No</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-label">PID</div>
+                      <div class="stat-value" id="claudePid">-</div>
+                    </div>
+                    <div class="stat">
+                      <div class="stat-label">Workspace</div>
+                      <div class="stat-value" id="claudeWorkspace">-</div>
+                    </div>
+                  </div>
+
+                  <div class="button-group">
+                    <button id="claudeStartBtn" class="btn btn-primary">Start</button>
+                    <button id="claudeStopBtn" class="btn btn-secondary" disabled>Stop</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Services Tab -->
+            <div class="tab-pane" id="services">
+              <h2>Services</h2>
+
+              <!-- Terminal Service -->
+              <div class="card">
+                <div class="card-header">
+                  <h3>Terminal Service</h3>
+                </div>
+                <div class="card-body">
+                  <p>Active Terminals: <span id="terminalCount">0</span></p>
+                  <button id="createTerminalBtn" class="btn btn-primary">Create Terminal</button>
+                </div>
+              </div>
+
+              <!-- Recording Service -->
+              <div class="card">
+                <div class="card-header">
+                  <h3>Recording Service</h3>
+                </div>
+                <div class="card-body">
+                  <p>Status: <span id="recordingStatus">Not Recording</span></p>
+                  <div class="button-group">
+                    <button id="startRecordingBtn" class="btn btn-primary">Start Recording</button>
+                    <button id="stopRecordingBtn" class="btn btn-secondary" disabled>
+                      Stop Recording
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- File Watcher Service -->
+              <div class="card">
+                <div class="card-header">
+                  <h3>File Watcher Service</h3>
+                </div>
+                <div class="card-body">
+                  <p>Status: <span id="watcherStatus">Not Watching</span></p>
+                  <p>Watched Paths: <span id="watchedPathsCount">0</span></p>
+                  <div class="button-group">
+                    <button id="startWatcherBtn" class="btn btn-primary">Start Watching</button>
+                    <button id="stopWatcherBtn" class="btn btn-secondary" disabled>
+                      Stop Watching
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tunnel Service -->
+              <div class="card">
+                <div class="card-header">
+                  <h3>Tunnel Service</h3>
+                </div>
+                <div class="card-body">
+                  <p>Status: <span id="tunnelStatus">Not Running</span></p>
+                  <p>Public URL: <span id="tunnelUrl">-</span></p>
+                  <div class="button-group">
+                    <button id="startTunnelBtn" class="btn btn-primary">Start Tunnel</button>
+                    <button id="stopTunnelBtn" class="btn btn-secondary" disabled>
+                      Stop Tunnel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane" id="settings">
+              <h2>Settings</h2>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Application</h3>
+                </div>
+                <div class="card-body">
+                  <p>Version: <span id="appVersion">-</span></p>
+                  <div class="button-group">
+                    <button id="checkUpdatesBtn" class="btn btn-primary">Check for Updates</button>
+                    <button id="openDashboardBtn" class="btn btn-secondary">
+                      Open Dashboard
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Update</h3>
+                </div>
+                <div class="card-body">
+                  <p id="updateStatus">No updates available</p>
+                  <button id="downloadUpdateBtn" class="btn btn-primary" disabled>
+                    Download Update
+                  </button>
+                  <button id="installUpdateBtn" class="btn btn-primary" disabled>
+                    Install Update
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div class="tab-pane" id="logs">
+              <h2>Logs</h2>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Application Logs</h3>
+                  <div class="button-group">
+                    <button id="refreshLogsBtn" class="btn btn-secondary btn-sm">Refresh</button>
+                    <button id="clearLogsBtn" class="btn btn-secondary btn-sm">Clear</button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="logs-container" id="logsContainer">
+                    <pre id="logsContent">Loading logs...</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

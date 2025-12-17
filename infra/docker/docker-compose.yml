@@ -1,0 +1,154 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: remotedevai-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-remotedevai}
+      POSTGRES_USER: ${POSTGRES_USER:-remotedevai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-remotedevai_dev_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-remotedevai}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - remotedevai-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: remotedevai-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-remotedevai_redis_password}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - remotedevai-network
+
+  # MinIO (S3-compatible storage)
+  minio:
+    image: minio/minio:latest
+    container_name: remotedevai-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - remotedevai-network
+
+  # Cloud Backend Service
+  cloud:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.cloud
+    container_name: remotedevai-cloud
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${CLOUD_PORT:-3000}
+
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-remotedevai}:${POSTGRES_PASSWORD:-remotedevai_dev_password}@postgres:5432/${POSTGRES_DB:-remotedevai}
+
+      # Redis
+      REDIS_URL: redis://:${REDIS_PASSWORD:-remotedevai_redis_password}@redis:6379
+
+      # MinIO/S3
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      S3_BUCKET: ${S3_BUCKET:-remotedevai-files}
+      S3_REGION: ${S3_REGION:-us-east-1}
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
+      # CORS
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+
+      # WebSocket
+      WS_PORT: ${WS_PORT:-3001}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+    ports:
+      - "${CLOUD_PORT:-3000}:3000"
+      - "${WS_PORT:-3001}:3001"
+    volumes:
+      - ../../packages/cloud:/app/packages/cloud
+      - ../../packages/shared:/app/packages/shared
+      - /app/node_modules
+      - /app/packages/cloud/node_modules
+      - /app/packages/shared/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - remotedevai-network
+    restart: unless-stopped
+
+  # Desktop Agent (for testing)
+  desktop-agent:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.desktop
+    container_name: remotedevai-desktop-agent
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      CLOUD_URL: ${CLOUD_URL:-http://cloud:3000}
+      AGENT_ID: ${AGENT_ID:-test-agent-1}
+      AGENT_TOKEN: ${AGENT_TOKEN:-test-token}
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+    volumes:
+      - ../../packages/desktop:/app/packages/desktop
+      - ../../packages/shared:/app/packages/shared
+      - /app/node_modules
+      - /app/packages/desktop/node_modules
+      - /app/packages/shared/node_modules
+    depends_on:
+      - cloud
+    networks:
+      - remotedevai-network
+    restart: unless-stopped
+    profiles:
+      - desktop-test
+
+networks:
+  remotedevai-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local

@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: RemoteDevAI Cloud API
+  version: 1.0.0
+  description: |
+    RemoteDevAI Cloud Backend API - Manage projects, AI coding sessions, screen recordings, and subscriptions.
+
+    ## Authentication
+    Most endpoints require authentication using a Bearer token (JWT). Include it in the Authorization header:
+    ```
+    Authorization: Bearer <your_token>
+    ```
+
+    ## Rate Limiting
+    API endpoints are rate-limited to ensure fair usage:
+    - Auth endpoints: 5 requests per 15 minutes per IP
+    - General API endpoints: 100 requests per 15 minutes per IP
+    - Webhook endpoints: 50 requests per 15 minutes per IP
+
+    ## Pagination
+    List endpoints support pagination with query parameters:
+    - `page`: Page number (default: 1)
+    - `limit`: Items per page (default: 10, max: 100)
+
+    ## Error Responses
+    All errors follow this format:
+    ```json
+    {
+      "success": false,
+      "error": "Error type",
+      "message": "Human-readable error description"
+    }
+    ```
+
+  contact:
+    name: RemoteDevAI Support
+    email: support@remotedevai.com
+    url: https://remotedevai.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://api.remotedevai.com
+    description: Production server
+  - url: https://staging-api.remotedevai.com
+    description: Staging server
+
+tags:
+  - name: Authentication
+    description: User authentication and registration
+  - name: Users
+    description: User profile management
+  - name: Projects
+    description: Project management operations
+  - name: Sessions
+    description: AI coding session management
+  - name: Recordings
+    description: Screen recording management
+  - name: Payments
+    description: Subscription and payment management
+  - name: Relay
+    description: Desktop agent relay operations
+  - name: Webhooks
+    description: Webhook endpoints for external integrations
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT authentication token obtained from login endpoint
+
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for service-to-service authentication
+
+  responses:
+    UnauthorizedError:
+      description: Authentication is required or token is invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized"
+              message:
+                type: string
+                example: "Authentication token is required"
+
+    ForbiddenError:
+      description: User does not have permission to access this resource
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Forbidden"
+              message:
+                type: string
+                example: "You don't have permission to access this resource"
+
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Not found"
+              message:
+                type: string
+                example: "The requested resource does not exist"
+
+    ValidationError:
+      description: Request validation failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Validation failed"
+              message:
+                type: string
+                example: "Invalid request parameters"
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+
+    RateLimitError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Rate limit exceeded"
+              message:
+                type: string
+                example: "Too many requests, please try again later"
+              retryAfter:
+                type: integer
+                description: Seconds until rate limit resets
+                example: 900
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error"
+              message:
+                type: string
+                example: "An unexpected error occurred"
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+        example: 1
+
+    LimitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+        example: 10
+
+    IdParam:
+      name: id
+      in: path
+      description: Resource ID (UUID)
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
+
+security:
+  - bearerAuth: []

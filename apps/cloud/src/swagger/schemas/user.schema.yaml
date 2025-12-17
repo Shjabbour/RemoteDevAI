@@ -1,0 +1,120 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique user identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "user@example.com"
+        name:
+          type: string
+          description: User's full name
+          example: "John Doe"
+          nullable: true
+        avatarUrl:
+          type: string
+          format: uri
+          description: URL to user's avatar image
+          example: "https://example.com/avatar.jpg"
+          nullable: true
+        subscriptionTier:
+          type: string
+          enum: [FREE, PRO, ENTERPRISE]
+          description: User's subscription tier
+          example: "FREE"
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: "2025-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last profile update timestamp
+          example: "2025-01-15T10:30:00Z"
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: Last activity timestamp
+          example: "2025-01-15T15:45:00Z"
+      required:
+        - id
+        - email
+        - subscriptionTier
+        - createdAt
+        - updatedAt
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        subscriptionTier:
+          type: string
+          enum: [FREE, PRO, ENTERPRISE]
+        subscription:
+          $ref: '#/components/schemas/SubscriptionStatus'
+        createdAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: string
+          format: date-time
+
+    UserStatistics:
+      type: object
+      properties:
+        totalProjects:
+          type: integer
+          description: Total number of projects created
+          example: 15
+        activeProjects:
+          type: integer
+          description: Number of active (non-archived) projects
+          example: 8
+        totalSessions:
+          type: integer
+          description: Total number of coding sessions
+          example: 142
+        totalRecordings:
+          type: integer
+          description: Total number of screen recordings
+          example: 67
+        storageUsed:
+          type: integer
+          description: Storage used in bytes
+          example: 5368709120
+        storageLimit:
+          type: integer
+          description: Storage limit in bytes based on subscription
+          example: 10737418240
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Jane Smith"
+        avatarUrl:
+          type: string
+          format: uri
+          example: "https://example.com/new-avatar.jpg"
