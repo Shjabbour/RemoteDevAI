@@ -228,7 +228,7 @@ jobs:
           find docs -type f -name "*.md" -exec sed -i "s/version: .*/version: $VERSION/g" {} +
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "docs: update version to ${{ needs.create-release.outputs.version }}"
           title: "Update documentation for v${{ needs.create-release.outputs.version }}"
